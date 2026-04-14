@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Wormhole Federation | WebRTC + MQTT + Fano CRDT + Vector Clocks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/simple-peer@9.11.1/simplepeer.min.js"></script>
+    <script src="https://unpkg.com/mqtt@5.0.0/dist/mqtt.min.js"></script>
+    <style>
+        @keyframes wormholePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+            50% { box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.8); }
+        }
+        @keyframes peerPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .wormhole-active { animation: wormholePulse 2s ease-in-out infinite; }
+        .peer-online { animation: peerPulse 1.5s ease-in-out infinite; background: linear-gradient(135deg, #10b981, #059669); }
+        .fano-node { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .fano-node:hover { transform: scale(1.05); }
+        .vector-clock { font-family: 'JetBrains Mono', monospace; font-size: 9px; }
+        .log-entry { animation: slideIn 0.2s ease-out; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-indigo-950/20 to-slate-950 min-h-screen p-6 font-mono">
+
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-6 text-center">
+        <h1 class="text-3xl font-black bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">🌀 COMPLETE WORMHOLE FEDERATION</h1>
+        <p class="text-slate-400 text-xs mt-2">WebRTC Mesh | MQTT Bridge | Fano CRDT (7-Node Consensus) | Vector Clocks</p>
+    </div>
+
+    <!-- Status Dashboard -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-black/40 backdrop-blur rounded-xl p-3 border border-purple-500/30">
+            <div class="text-[9px] text-slate-400 uppercase">🌐 WebRTC Peers</div>
+            <div class="text-2xl font-bold text-cyan-400" id="webrtcCount">0</div>
+        </div>
+        <div class="bg-black/40 backdrop-blur rounded-xl p-3 border border-purple-500/30">
+            <div class="text-[9px] text-slate-400 uppercase">📡 MQTT Status</div>
+            <div class="text-2xl font-bold text-emerald-400" id="mqttStatus">Disconnected</div>
+        </div>
+        <div class="bg-black/40 backdrop-blur rounded-xl p-3 border border-purple-500/30">
+            <div class="text-[9px] text-slate-400 uppercase">🔷 Fano CRDT</div>
+            <div class="text-2xl font-bold text-purple-400" id="fanoConsensus">7/7</div>
+        </div>
+        <div class="bg-black/40 backdrop-blur rounded-xl p-3 border border-purple-500/30">
+            <div class="text-[9px] text-slate-400 uppercase">⏰ Vector Clock</div>
+            <div class="text-xs font-mono text-amber-400" id="vectorClock">—</div>
+        </div>
+    </div>
+
+    <!-- Main Grid: Iframes + Fano Topology + Controls -->
+    <div class="grid lg:grid-cols-3 gap-6 mb-6">
+        <!-- Left: Iframe Nodes -->
+        <div class="lg:col-span-2 space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xs font-bold text-purple-400 uppercase tracking-wider">🌀 Clock Nodes (Federated)</h2>
+                <div class="flex gap-2">
+                    <button id="addNodeBtn" class="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded-lg text-xs transition">➕ Add Node</button>
+                    <button id="webrtcConnectBtn" class="px-3 py-1 bg-cyan-600 hover:bg-cyan-700 rounded-lg text-xs transition">🔗 WebRTC Connect</button>
+                    <button id="mqttToggleBtn" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-xs transition">📡 MQTT Bridge</button>
+                </div>
+            </div>
+            <div id="iframeGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Dynamic iframes appear here -->
+            </div>
+        </div>
+
+        <!-- Right: Fano Plane Topology + Vector Clock Visualization -->
+        <div class="space-y-4">
+            <!-- Fano Plane (7-node projective geometry) -->
+            <div class="bg-black/40 backdrop-blur rounded-xl p-4 border border-purple-500/30">
+                <h3 class="text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-3">🔷 Fano Plane Consensus (τ₇)</h3>
+                <div class="relative h-64">
+                    <svg viewBox="0 0 300 300" class="w-full h-full">
+                        <!-- Fano triangle vertices -->
+                        <circle cx="150" cy="30" r="18" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2" class="fano-node" id="fano-node-0"/>
+                        <circle cx="50" cy="230" r="18" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2" class="fano-node" id="fano-node-1"/>
+                        <circle cx="250" cy="230" r="18" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2" class="fano-node" id="fano-node-2"/>
+                        <circle cx="150" cy="130" r="18" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2" class="fano-node" id="fano-node-3"/>
+                        <circle cx="100" cy="180" r="18" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2" class="fano-node" id="fano-node-4"/>
+                        <circle cx="200" cy="180" r="18" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2" class="fano-node" id="fano-node-5"/>
+                        <circle cx="150" cy="230" r="18" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2" class="fano-node" id="fano-node-6"/>
+                        <!-- Edges -->
+                        <line x1="150" y1="48" x2="60" y2="218" stroke="#4c1d95" stroke-width="1.5" opacity="0.5"/>
+                        <line x1="150" y1="48" x2="240" y2="218" stroke="#4c1d95" stroke-width="1.5" opacity="0.5"/>
+                        <line x1="50" y1="230" x2="250" y2="230" stroke="#4c1d95" stroke-width="1.5" opacity="0.5"/>
+                        <line x1="150" y1="130" x2="100" y2="180" stroke="#4c1d95" stroke-width="1.5" opacity="0.5"/>
+                        <line x1="150" y1="130" x2="200" y2="180" stroke="#4c1d95" stroke-width="1.5" opacity="0.5"/>
+                        <line x1="150" y1="230" x2="100" y2="180" stroke="#4c1d95" stroke-width="1.5" opacity="0.5"/>
+                        <line x1="150" y1="230" x2="200" y2="180" stroke="#4c1d95" stroke-width="1.5" opacity="0.5"/>
+                        <!-- Labels -->
+                        <text x="143" y="25" class="text-[8px] fill-purple-300">P0</text>
+                        <text x="25" y="235" class="text-[8px] fill-purple-300">P1</text>
+                        <text x="255" y="235" class="text-[8px] fill-purple-300">P2</text>
+                        <text x="155" y="125" class="text-[8px] fill-purple-300">P3</text>
+                        <text x="75" y="175" class="text-[8px] fill-purple-300">P4</text>
+                        <text x="205" y="175" class="text-[8px] fill-purple-300">P5</text>
+                        <text x="155" y="245" class="text-[8px] fill-purple-300">P6</text>
+                    </svg>
+                </div>
+                <div class="text-center text-[8px] text-slate-500 mt-2">Fano Plane: 7 points, 7 lines | Consensus requires 4/7 nodes</div>
+            </div>
+
+            <!-- Vector Clock Display -->
+            <div class="bg-black/40 backdrop-blur rounded-xl p-3 border border-amber-500/30">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-[9px] font-bold text-amber-400 uppercase">⏰ Vector Clock (Causal Ordering)</span>
+                    <span class="text-[7px] text-slate-500">Lamport timestamp + node vector</span>
+                </div>
+                <div id="vectorClockDisplay" class="space-y-1 max-h-32 overflow-y-auto vector-clock">
+                    <div class="text-slate-400 text-[8px]">Waiting for causal events...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Federation Log -->
+    <div class="bg-black/40 backdrop-blur rounded-xl border border-purple-500/20 overflow-hidden">
+        <div class="px-4 py-2 border-b border-purple-500/20 flex justify-between items-center">
+            <span class="text-[10px] font-bold text-purple-400 uppercase tracking-wider">🌀 Wormhole Traffic Log (All Layers)</span>
+            <button id="clearLogBtn" class="text-[8px] px-2 py-1 bg-slate-800 rounded hover:bg-slate-700">Clear</button>
+        </div>
+        <div id="wormholeLog" class="h-40 overflow-y-auto p-2 space-y-1 font-mono text-[8px]">
+            <div class="text-slate-500 italic">Initializing federation layers...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // COMPLETE 4-LAYER WORMHOLE FEDERATION
+    // 1. WebRTC Mesh (P2P)
+    // 2. MQTT Bridge (Broker)
+    // 3. Fano CRDT (7-node consensus)
+    // 4. Vector Clocks (Causal ordering)
+    // --------------------------------------------------------------
+
+    // --- Vector Clock Implementation ---
+    class VectorClock {
+        constructor(nodeId) {
+            this.nodeId = nodeId;
+            this.clock = new Map(); // nodeId -> counter
+            this.clock.set(nodeId, 0);
+            this.listeners = [];
+        }
+
+        tick() {
+            const val = (this.clock.get(this.nodeId) || 0) + 1;
+            this.clock.set(this.nodeId, val);
+            this.broadcast();
+            return { ...Object.fromEntries(this.clock) };
+        }
+
+        update(remoteClock) {
+            let changed = false;
+            for (const [node, counter] of Object.entries(remoteClock)) {
+                const current = this.clock.get(node) || 0;
+                if (counter > current) {
+                    this.clock.set(node, counter);
+                    changed = true;
+                }
+            }
+            if (changed) {
+                const local = this.clock.get(this.nodeId) || 0;
+                this.clock.set(this.nodeId, Math.max(local, (remoteClock[this.nodeId] || 0) + 1));
+                this.broadcast();
+            }
+            return changed;
+        }
+
+        getState() { return Object.fromEntries(this.clock); }
+
+        compare(a, b) {
+            // Returns 'before', 'after', 'concurrent', 'equal'
+            let aBefore = true, bBefore = true;
+            for (const [node, val] of Object.entries(a)) {
+                if (val > (b[node] || 0)) aBefore = false;
+            }
+            for (const [node, val] of Object.entries(b)) {
+                if (val > (a[node] || 0)) bBefore = false;
+            }
+            if (aBefore && bBefore) return 'equal';
+            if (aBefore) return 'before';
+            if (bBefore) return 'after';
+            return 'concurrent';
+        }
+
+        broadcast() { this.listeners.forEach(l => l(this.getState())); }
+        subscribe(cb) { this.listeners.push(cb); return () => { this.listeners = this.listeners.filter(l => l !== cb); }; }
+    }
+
+    // --- Fano CRDT (7-node consensus using projective geometry) ---
+    // Fano lines define quorum requirements: any 4 points determine consensus
+    const FANO_LINES = [
+        [0,1,3], [0,2,5], [0,4,6],
+        [1,2,4], [1,5,6],
+        [2,3,6],
+        [3,4,5]
+    ];
+
+    class FanoCRDT {
+        constructor(nodeId, fanoPosition) {
+            this.nodeId = nodeId;
+            this.fanoPosition = fanoPosition % 7; // 0-6
+            this.values = new Map(); // key -> { value, timestamp, nodeId, fanoPosition }
+            this.consensusCache = new Map();
+            this.listeners = [];
+        }
+
+        set(key, value) {
+            const now = Date.now();
+            const entry = { value, timestamp: now, nodeId: this.nodeId, fanoPosition: this.fanoPosition };
+            this.values.set(key, entry);
+            this.checkConsensus(key);
+            this.broadcast({ type: 'FANO_MUTATION', key, entry });
+            return entry;
+        }
+
+        merge(remoteValues) {
+            let changed = false;
+            for (const [key, remoteEntry] of Object.entries(remoteValues)) {
+                const current = this.values.get(key);
+                if (!current || remoteEntry.timestamp > current.timestamp ||
+                    (remoteEntry.timestamp === current.timestamp && remoteEntry.nodeId > current.nodeId)) {
+                    this.values.set(key, remoteEntry);
+                    changed = true;
+                    this.checkConsensus(key);
+                }
+            }
+            if (changed) this.broadcast({ type: 'FANO_MERGE', state: this.getState() });
+            return changed;
+        }
+
+        checkConsensus(key) {
+            // Fano quorum: need 4 nodes agreeing (any line of 3 + 1 = 4)
+            const entry = this.values.get(key);
+            if (!entry) return false;
+            
+            // Group by value
+            const valueGroups = new Map();
+            for (const [k, v] of this.values) {
+                if (k === key) continue;
+                const group = valueGroups.get(v.value) || [];
+                group.push(v);
+                valueGroups.set(v.value, group);
+            }
+            
+            // Check if any value has quorum (4+ nodes)
+            for (const [val, nodes] of valueGroups) {
+                if (nodes.length >= 4) {
+                    if (!this.consensusCache.get(key) || this.consensusCache.get(key) !== val) {
+                        this.consensusCache.set(key, val);
+                        this.broadcast({ type: 'FANO_CONSENSUS', key, value: val, quorum: nodes.length });
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        getState() {
+            const obj = {};
+            for (const [k, v] of this.values.entries()) obj[k] = v;
+            return obj;
+        }
+
+        getConsensus(key) { return this.consensusCache.get(key); }
+
+        broadcast(msg) { this.listeners.forEach(l => l(msg)); }
+        subscribe(cb) { this.listeners.push(cb); return () => { this.listeners = this.listeners.filter(l => l !== cb); }; }
+    }
+
+    // --- Main Federation Manager ---
+    class CompleteWormholeFederation {
+        constructor() {
+            this.nodeId = `hub_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+            this.frames = new Map();
+            this.nextFrameId = 1;
+            this.peers = new Map(); // WebRTC peers
+            this.mqttClient = null;
+            this.mqttConnected = false;
+            
+            // Core components
+            this.vectorClock = new VectorClock(this.nodeId);
+            this.fanoCRDT = new FanoCRDT(this.nodeId, 0);
+            
+            this.logEntries = [];
+            this.maxLogEntries = 200;
+            
+            this.init();
+        }
+
+        init() {
+            this.setupListeners();
+            this.spawnFrame(); // Initial node
+            this.spawnFrame(); // Second node
+            this.initMQTT();
+            this.addLog('SYSTEM', `Hub initialized | Node ID: ${this.nodeId}`, 'cyan');
+            
+            // Periodic vector clock tick
+            setInterval(() => {
+                this.vectorClock.tick();
+                this.updateUI();
+            }, 5000);
+        }
+
+        setupListeners() {
+            this.vectorClock.subscribe((state) => {
+                this.addLog('VECTOR', `Clock updated: ${JSON.stringify(state)}`, 'amber');
+                this.updateUI();
+            });
+            
+            this.fanoCRDT.subscribe((msg) => {
+                if (msg.type === 'FANO_CONSENSUS') {
+                    this.addLog('FANO', `Consensus reached on ${msg.key}=${msg.value} (quorum: ${msg.quorum})`, 'purple');
+                    this.updateUI();
+                } else if (msg.type === 'FANO_MUTATION') {
+                    this.addLog('FANO', `Mutation: ${msg.key}`, 'indigo');
+                    // Propagate to WebRTC peers
+                    this.broadcastToWebRTC(msg);
+                    if (this.mqttConnected) this.mqttClient.publish('abacus/fano', JSON.stringify(msg));
+                }
+            });
+        }
+
+        // --- Iframe Management ---
+        spawnFrame() {
+            const id = this.nextFrameId++;
+            const container = document.getElementById('iframeGrid');
+            const wrapper = document.createElement('div');
+            wrapper.className = 'wormhole-active rounded-xl overflow-hidden border border-purple-500/30';
+            wrapper.id = `frame-wrapper-${id}`;
+            
+            const iframe = document.createElement('iframe');
+            iframe.className = 'w-full h-64 bg-black/20';
+            iframe.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms allow-modals';
+            
+            wrapper.appendChild(iframe);
+            container.appendChild(wrapper);
+            
+            const offset = (id - 1) * 720;
+            this.populateIframe(iframe, id, offset);
+            this.frames.set(id, { iframe, wrapper, offset, nodeId: `frame_${id}` });
+            
+            this.addLog('IFRAME', `Node ${id} spawned (offset: ${offset})`, 'green');
+            this.updateUI();
+            
+            // Setup message listener
+            window.addEventListener('message', (event) => {
+                if (event.source === iframe.contentWindow) {
+                    this.handleFrameMessage(id, event.data);
+                }
+            });
+        }
+
+populateIframe(iframe, frameId, offset) {
+            // Load external clock node page
+            iframe.src = 'clock-node.html';
+        }
+
+        handleFrameMessage(frameId, msg) {
+            if (msg?.type === 'TICK') {
+                this.vectorClock.tick();
+                this.fanoCRDT.set(`frame_${frameId}_tick`, msg.tick);
+                this.addLog(`NODE${frameId}`, `Tick ${msg.tick}`, 'emerald');
+            }
+        }
+
+        // --- WebRTC Mesh ---
+        initWebRTC() {
+            if (typeof SimplePeer === 'undefined') {
+                this.addLog('WEBRTC', 'SimplePeer library not loaded', 'red');
+                return;
+            }
+            
+            // Create signaling channel via BroadcastChannel for demo
+            const signaling = new BroadcastChannel('webrtc-signal');
+            
+            const peer = new SimplePeer({ initiator: true, trickle: false });
+            peer.on('signal', data => { signaling.postMessage({ type: 'signal', data }); });
+            peer.on('connect', () => {
+                this.addLog('WEBRTC', 'Peer connected!', 'cyan');
+                this.peers.set(peer._id || Date.now(), peer);
+                this.updateUI();
+            });
+            peer.on('data', data => {
+                const msg = JSON.parse(data);
+                this.handleWebRTCMessage(msg);
+            });
+            
+            signaling.onmessage = (e) => {
+                if (e.data.type === 'signal') {
+                    peer.signal(e.data.data);
+                }
+            };
+            
+            this.addLog('WEBRTC', 'WebRTC initialized, waiting for peers...', 'cyan');
+        }
+
+        broadcastToWebRTC(msg) {
+            for (const [id, peer] of this.peers) {
+                if (peer.connected) peer.send(JSON.stringify(msg));
+            }
+        }
+
+        handleWebRTCMessage(msg) {
+            this.addLog('WEBRTC', `Received: ${msg.type}`, 'cyan');
+            if (msg.type === 'FANO_MUTATION') {
+                this.fanoCRDT.merge({ [msg.key]: msg.entry });
+                this.vectorClock.update(msg.vectorClock || {});
+            }
+        }
+
+        // --- MQTT Bridge ---
+        initMQTT() {
+            if (typeof mqtt === 'undefined') {
+                this.addLog('MQTT', 'MQTT library not loaded', 'red');
+                return;
+            }
+            
+            try {
+                this.mqttClient = mqtt.connect('wss://test.mosquitto.org:8081');
+                this.mqttClient.on('connect', () => {
+                    this.mqttConnected = true;
+                    this.mqttClient.subscribe('abacus/+/+');
+                    this.addLog('MQTT', 'Connected to Mosquitto broker', 'emerald');
+                    this.updateUI();
+                });
+                this.mqttClient.on('message', (topic, message) => {
+                    const msg = JSON.parse(message.toString());
+                    this.addLog('MQTT', `Received from ${topic}`, 'blue');
+                    if (msg.type === 'FANO_MUTATION') {
+                        this.fanoCRDT.merge({ [msg.key]: msg.entry });
+                        this.vectorClock.update(msg.vectorClock || {});
+                    }
+                });
+                this.mqttClient.on('error', (err) => {
+                    this.addLog('MQTT', `Error: ${err.message}`, 'red');
+                });
+            } catch(e) {
+                this.addLog('MQTT', `Failed: ${e.message}`, 'red');
+            }
+        }
+
+        toggleMQTT() {
+            if (this.mqttConnected) {
+                this.mqttClient.end();
+                this.mqttConnected = false;
+                this.addLog('MQTT', 'Disconnected', 'yellow');
+            } else {
+                this.initMQTT();
+            }
+            this.updateUI();
+        }
+
+        // --- UI Updates ---
+        updateUI() {
+            document.getElementById('webrtcCount').innerText = this.peers.size;
+            document.getElementById('mqttStatus').innerText = this.mqttConnected ? 'Connected' : 'Disconnected';
+            document.getElementById('fanoConsensus').innerText = `${this.fanoCRDT.values.size} keys`;
+            
+            const vcState = this.vectorClock.getState();
+            const vcStr = Object.entries(vcState).slice(0, 3).map(([k,v]) => `${k.substr(-4)}:${v}`).join(' | ');
+            document.getElementById('vectorClock').innerHTML = vcStr || '—';
+            
+            const vcDisplay = document.getElementById('vectorClockDisplay');
+            if (vcDisplay) {
+                vcDisplay.innerHTML = Object.entries(vcState).map(([k,v]) => 
+                    `<div class="text-[7px] text-slate-300"><span class="text-amber-400">${k.substr(-6)}</span>: ${v}</div>`
+                ).join('') || '<div class="text-slate-400 text-[7px]">No causal events...</div>';
+            }
+        }
+
+        addLog(source, message, color) {
+            const entry = { source, message, color, time: new Date().toLocaleTimeString() };
+            this.logEntries.unshift(entry);
+            if (this.logEntries.length > this.maxLogEntries) this.logEntries.pop();
+            this.renderLog();
+        }
+
+        renderLog() {
+            const container = document.getElementById('wormholeLog');
+            if (!container) return;
+            if (this.logEntries.length === 0) {
+                container.innerHTML = '<div class="text-slate-500 italic">No wormhole activity...</div>';
+                return;
+            }
+            container.innerHTML = this.logEntries.map(entry => `
+                <div class="border-b border-slate-800/30 pb-1 log-entry">
+                    <span class="text-slate-600">[${entry.time}]</span>
+                    <span class="text-${entry.color}-400 ml-2 font-bold">${entry.source}</span>
+                    <span class="text-slate-300 ml-2">${entry.message}</span>
+                </div>
+            `).join('');
+        }
+
+        resetAll() {
+            this.fanoCRDT = new FanoCRDT(this.nodeId, 0);
+            this.vectorClock = new VectorClock(this.nodeId);
+            this.addLog('SYSTEM', 'Full reset complete', 'red');
+            this.updateUI();
+        }
+    }
+
+    // Initialize
+    const federation = new CompleteWormholeFederation();
+    
+    // Bind UI
+    document.getElementById('addNodeBtn')?.addEventListener('click', () => federation.spawnFrame());
+    document.getElementById('webrtcConnectBtn')?.addEventListener('click', () => federation.initWebRTC());
+    document.getElementById('mqttToggleBtn')?.addEventListener('click', () => federation.toggleMQTT());
+    document.getElementById('clearLogBtn')?.addEventListener('click', () => { federation.logEntries = []; federation.renderLog(); });
+    
+    // Auto-start WebRTC after 3 seconds
+    setTimeout(() => federation.initWebRTC(), 3000);
+</script>
+</body>
+</html>

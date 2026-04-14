@@ -1,0 +1,19 @@
+{
+  "name": "wlog",
+  "version": "0.1.0",
+  "description": "WLOG: append-only deterministic replay machine for decentralized infinite canvas",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --experimental-vm-modules dist/index.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^6.0.2"
+  }
+}

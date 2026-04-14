@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { margin: 0; background: #111; font-family: monospace; overflow: hidden; }
+        .wrap { height: 100%; display: flex; flex-direction: column; padding: 8px; background: linear-gradient(#111,#1a0a2e); }
+        .header { display: flex; justify-content: space-between; font-size: 7px; color: #a855f7; }
+        .center { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10vh; }
+        .stats { font-size: 8px; }
+        .stats span { margin-right: 4px; }
+        .u { color: #10b981; }
+        .p { color: #06b6d4; }
+        .dp { color: #6366f1; }
+        .footer { font-size: 6px; color: #64748b; text-align: center; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script>
+        var MP = 5040;
+        var mt = 0;
+        var off = 840;
+        
+        function getWallis(t) {
+            return {
+                u: t % 60,
+                p: (t / 60 | 0) % 60,
+                dp: (t / 3600 | 0)
+            };
+        }
+        
+        function render() {
+            var tick = (mt + off) % MP;
+            var w = getWallis(tick);
+            var glyphs = ["⚛", "🌀", "🔷", "💠"];
+            var c = ((tick % 60) / 15 | 0) % 4;
+            var glyph = glyphs[c];
+            
+            document.getElementById('root').innerHTML = 
+                '<div class="wrap">' +
+                    '<div class="header"><span>NODE 1</span><span>' + w.dp + '‵‵</span></div>' +
+                    '<div class="center">' + glyph + '</div>' +
+                    '<div class="stats"><span class="u">' + w.u + '°</span> <span class="p">' + w.p + '‵</span> <span class="dp">' + w.dp + '‵‵</span></div>' +
+                    '<div class="footer">Tick: ' + tick + '</div>' +
+                '</div>';
+        }
+        
+        setInterval(function() {
+            mt = (mt + 1) % MP;
+            render();
+            window.parent.postMessage({type: 'TICK', tick: mt}, '*');
+        }, 100);
+        
+        render();
+    </script>
+</body>
+</html>
