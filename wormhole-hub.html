@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wormhole Federation Hub | Multi-Peer Abacus Clock Network</title>
+    <title>Wormhole Federation Hub | Web Component Clock</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .wormhole-active { animation: wormholePulse 2s ease-in-out infinite; }
@@ -20,8 +20,8 @@
 <div class="max-w-7xl mx-auto">
     <!-- Header -->
     <div class="mb-8 text-center">
-        <h1 class="text-3xl font-black bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">🌀 WORMHOLE FEDERATION HUB</h1>
-        <p class="text-slate-400 text-sm mt-2">BOM | NULL | ESC | CRDT | Multi-Peer Temporal Mesh</p>
+        <h1 class="text-3xl font-black bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">WORMHOLE FEDERATION HUB</h1>
+        <p class="text-slate-400 text-sm mt-2">Web Components + CRDT + BroadcastChannel</p>
     </div>
 
     <!-- Control Bar -->
@@ -29,291 +29,131 @@
         <div class="flex flex-wrap gap-4 items-center justify-between">
             <div class="flex gap-3">
                 <button id="addFrameBtn" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-bold transition flex items-center gap-2">
-                    ➕ Spawn Clock Node
+                    ➕ Spawn Node
                 </button>
                 <button id="broadcastSyncBtn" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 rounded-lg text-sm font-bold transition">
-                    📡 Force Global Sync
+                    📡 Sync All
                 </button>
                 <button id="resetAllBtn" class="px-4 py-2 bg-amber-600/50 hover:bg-amber-600 rounded-lg text-sm transition">
-                    🔄 Reset All Nodes
+                    🔄 Reset
                 </button>
             </div>
             <div class="flex items-center gap-3 text-xs">
-                <span class="flex items-center gap-1"><span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Active Nodes: <span id="nodeCount">0</span></span>
-                <span class="flex items-center gap-1"><span class="w-2 h-2 bg-purple-500 rounded-full"></span> CRDT State: <span id="crdtVersion">—</span></span>
+                <span class="flex items-center gap-1">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> 
+                    Nodes: <span id="nodeCount">0</span>
+                </span>
             </div>
         </div>
     </div>
 
-    <!-- Iframe Grid -->
-    <div id="iframeGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        <!-- Dynamic iframes appear here -->
+    <!-- Using Web Components -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6" id="nodeGrid">
+        <!-- Nodes injected here with web components -->
     </div>
 
-    <!-- Federation Log / Wormhole Traffic -->
+    <!-- Hub Log -->
     <div class="bg-black/40 backdrop-blur rounded-2xl border border-purple-500/20 overflow-hidden">
         <div class="px-4 py-3 border-b border-purple-500/20 flex justify-between items-center">
-            <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">🌀 Wormhole Traffic Log</span>
+            <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">🌀 Hub Activity</span>
             <button id="clearLogBtn" class="text-[9px] px-2 py-1 bg-slate-800 rounded hover:bg-slate-700">Clear</button>
         </div>
-        <div id="wormholeLog" class="h-48 overflow-y-auto p-3 space-y-1 font-mono text-[9px]">
-            <div class="text-slate-500 italic">Waiting for wormhole activity...</div>
+        <div id="hubLog" class="h-32 overflow-y-auto p-3 space-y-1 font-mono text-[9px] text-slate-400">
+            <div class="text-slate-500 italic">Click "Spawn Node" to add clocks...</div>
         </div>
     </div>
 </div>
 
-<script>
-    // --------------------------------------------------------------
-    // WORMHOLE FEDERATION ENGINE
-    // - Manages multiple clock iframes
-    // - CRDT-based state synchronization
-    // - BroadcastChannel + postMessage transport
-    // - Bidirectional wormhole protocol
-    // --------------------------------------------------------------
+<!-- Load Web Components -->
+<script src="components/clock-node.js" type="module"></script>
 
-    // CRDT: Last-Write-Wins Register with Vector Clock semantics
-    class CRDTEngine {
-        constructor(nodeId) {
-            this.nodeId = nodeId;
-            this.state = new Map(); // key -> { value, timestamp, nodeId }
-            this.listeners = [];
-            this.logicClock = 0;
+<script type="module">
+    // Import web components
+    import './components/clock-node.js';
+    
+    // Hub state
+    const nodeGrid = document.getElementById('nodeGrid');
+    const nodeCount = document.getElementById('nodeCount');
+    const hubLog = document.getElementById('hubLog');
+    const nodes = [];
+    let nodeId = 0;
+    
+    // BroadcastChannel for federation
+    const channel = new BroadcastChannel('wlog-federation');
+    
+    channel.onmessage = (e) => {
+        if (e.data.type === 'SYNC') {
+            log('FEDERATION', `Global sync: tick=${e.data.tick}`);
+            nodes.forEach(n => {
+                n.clock.tick = e.data.tick;
+            });
         }
-
-        getClock() {
-            return ++this.logicClock;
-        }
-
-        set(key, value) {
-            const now = Date.now();
-            const current = this.state.get(key);
-            if (!current || now > current.timestamp || (now === current.timestamp && this.nodeId > current.nodeId)) {
-                this.state.set(key, { value, timestamp: now, nodeId: this.nodeId, version: this.getClock() });
-                this.notify({ type: 'MUTATION', key, value, timestamp: now, nodeId: this.nodeId });
-                return true;
-            }
-            return false;
-        }
-
-        merge(remoteState) {
-            let changed = false;
-            for (const [key, remoteVal] of Object.entries(remoteState)) {
-                const current = this.state.get(key);
-                if (!current || remoteVal.timestamp > current.timestamp || 
-                    (remoteVal.timestamp === current.timestamp && remoteVal.nodeId > current.nodeId)) {
-                    this.state.set(key, remoteVal);
-                    changed = true;
-                }
-            }
-            if (changed) this.notify({ type: 'MERGE', state: this.getState() });
-            return changed;
-        }
-
-        getState() {
-            const obj = {};
-            for (const [k, v] of this.state.entries()) {
-                obj[k] = v;
-            }
-            return obj;
-        }
-
-        get(key) {
-            return this.state.get(key)?.value;
-        }
-
-        notify(msg) {
-            this.listeners.forEach(l => l(msg));
-        }
-
-        subscribe(cb) {
-            this.listeners.push(cb);
-            return () => { this.listeners = this.listeners.filter(l => l !== cb); };
-        }
-    }
-
-    // Wormhole Message Types
-    const WORMHOLE = {
-        NULL: 'NULL',      // clock pulse
-        BOM: 'BOM',        // session boundary
-        ESC: 'ESC',        // escape / signal follows
-        SIGNAL: 'SIGNAL',  // data payload
-        STATE: 'STATE',    // CRDT state snapshot
-        SYNC: 'SYNC'       // sync request
     };
-
-    // Federation Manager
-    class WormholeFederation {
-        constructor() {
-            this.frames = new Map(); // id -> { iframe, element, nodeId }
-            this.nextFrameId = 1;
-            this.crdt = new CRDTEngine(`hub_${Date.now()}`);
-            this.broadcastChannel = new BroadcastChannel('abacus-wormhole');
-            this.logEntries = [];
-            this.maxLogEntries = 100;
-
-            // Setup CRDT listener
-            this.crdt.subscribe((msg) => {
-                if (msg.type === 'MUTATION') {
-                    this.broadcastToAllFrames({ type: WORMHOLE.SIGNAL, signal: msg });
-                    this.broadcastChannel.postMessage({ type: WORMHOLE.SIGNAL, signal: msg });
-                    this.addLog('CRDT', `Mutation: ${msg.key}=${msg.value}`, 'cyan');
-                }
-            });
-
-            // Setup BroadcastChannel listener
-            this.broadcastChannel.onmessage = (e) => {
-                const msg = e.data;
-                if (msg.type === WORMHOLE.SIGNAL) {
-                    this.crdt.merge({ [msg.signal.key]: msg.signal });
-                    this.addLog('BROADCAST', `Received remote mutation: ${msg.signal.key}`, 'purple');
-                } else if (msg.type === WORMHOLE.STATE) {
-                    this.crdt.merge(msg.state);
-                    this.addLog('BROADCAST', 'Merged CRDT state from peer', 'blue');
-                }
-            };
-
-            this.init();
-        }
-
-        init() {
-            // Spawn initial 3 nodes
-            setTimeout(() => {
-                this.spawnFrame();
-                this.spawnFrame();
-                this.spawnFrame();
-            }, 100);
-        }
-
-        spawnFrame() {
-            const id = this.nextFrameId++;
-            const nodeId = `node_${id}_${Date.now()}`;
-            const container = document.getElementById('iframeGrid');
-            const wrapper = document.createElement('div');
-            wrapper.className = 'peer-card';
-            wrapper.id = `frame-wrapper-${id}`;
-            
-            const iframe = document.createElement('iframe');
-            iframe.src = `about:blank`;
-            iframe.className = 'w-full h-[500px] rounded-xl border border-purple-500/30 bg-black/20 wormhole-active';
-            iframe.sandbox = 'allow-same-origin allow-scripts allow-popups allow-forms allow-modals';
-            
-            wrapper.appendChild(iframe);
-            container.appendChild(wrapper);
-            
-            // Store reference
-            this.frames.set(id, { iframe, wrapper, nodeId, tick: 0, offset: (id - 1) * 840 }); // stagger offsets
-            
-            // Write iframe content dynamically
-            this.populateIframe(iframe, id, nodeId);
-            
-            this.updateNodeCount();
-            this.addLog('SPAWN', `Node ${id} spawned (${nodeId})`, 'green');
-            
-            // Setup message listener for this iframe
-            window.addEventListener('message', (event) => {
-                if (event.source === iframe.contentWindow) {
-                    this.handleFrameMessage(id, event.data);
-                }
-            });
-        }
-        
-populateIframe(iframe, frameId, nodeId) {
-            // Use external clock node - same file for wormhole-hub
-            iframe.src = 'clock-node.html';
-        }
-        
-        handleFrameMessage(frameId, msg) {
-            if (!msg) return;
-            
-            switch(msg.type) {
-                case 'NULL':
-                    // Propagate NULL to CRDT and other nodes
-                    this.crdt.set('masterTick', msg.masterTick);
-                    this.addLog(`Node ${frameId}`, `NULL pulse (tick: ${msg.tick})`, 'emerald');
-                    break;
-                case 'HEARTBEAT':
-                    this.addLog(`Node ${frameId}`, `❤️ Heartbeat at tick ${msg.tick}`, 'slate');
-                    break;
-            }
-        }
-        
-        broadcastToAllFrames(msg) {
-            for (const [id, frame] of this.frames) {
-                if (frame.iframe.contentWindow) {
-                    frame.iframe.contentWindow.postMessage(msg, '*');
-                }
-            }
-        }
-        
-        broadcastGlobalSync() {
-            const state = this.crdt.getState();
-            this.broadcastToAllFrames({ type: WORMHOLE.STATE, state });
-            this.broadcastChannel.postMessage({ type: WORMHOLE.STATE, state });
-            this.addLog('HUB', 'Global sync broadcast sent to all nodes', 'purple');
-        }
-        
-        resetAllNodes() {
-            this.crdt.set('masterTick', 0);
-            this.broadcastToAllFrames({ type: 'RESET' });
-            this.broadcastChannel.postMessage({ type: 'RESET' });
-            this.addLog('HUB', 'Reset all nodes to tick 0', 'amber');
-        }
-        
-        updateNodeCount() {
-            document.getElementById('nodeCount').innerText = this.frames.size;
-            const state = this.crdt.getState();
-            document.getElementById('crdtVersion').innerText = Object.keys(state).length > 0 ? 'synced' : 'idle';
-        }
-        
-        addLog(source, message, color = 'white') {
-            this.logEntries.unshift({ source, message, color, time: new Date().toLocaleTimeString() });
-            if (this.logEntries.length > this.maxLogEntries) this.logEntries.pop();
-            this.renderLog();
-        }
-        
-        renderLog() {
-            const logContainer = document.getElementById('wormholeLog');
-            if (!logContainer) return;
-            if (this.logEntries.length === 0) {
-                logContainer.innerHTML = '<div class="text-slate-500 italic">No wormhole activity yet...</div>';
-                return;
-            }
-            logContainer.innerHTML = this.logEntries.map(entry => `
-                <div class="border-b border-slate-800/50 pb-1">
-                    <span class="text-slate-500">[${entry.time}]</span>
-                    <span class="text-${entry.color}-400 ml-2">${entry.source}</span>
-                    <span class="text-slate-300 ml-2">${entry.message}</span>
-                </div>
-            `).join('');
-        }
-        
-        removeFrame(id) {
-            const frame = this.frames.get(id);
-            if (frame) {
-                frame.wrapper.remove();
-                this.frames.delete(id);
-                this.updateNodeCount();
-                this.addLog('HUB', `Node ${id} removed`, 'red');
-            }
-        }
+    
+    function log(source, msg) {
+        const entry = document.createElement('div');
+        entry.className = 'log-entry flex gap-2';
+        entry.innerHTML = `<span class="text-purple-400">[${source}]</span><span>${msg}</span>`;
+        hubLog.insertBefore(entry, hubLog.firstChild);
+        while (hubLog.children.length > 30) hubLog.lastChild.remove();
     }
     
-    // Initialize federation
-    const federation = new WormholeFederation();
+    function addNode() {
+        nodeId++;
+        const offset = (nodeId - 1) * 840;
+        
+        // Create web component
+        const clock = document.createElement('wlog-clock-node');
+        clock.setAttribute('offset', offset);
+        clock.setAttribute('label', 'NODE' + nodeId);
+        
+        // Listen to ticks
+        clock.addEventListener('tick', (e) => {
+            log(e.detail.nodeId, `tick ${e.detail.federatedTick}`);
+        });
+        
+        nodeGrid.appendChild(clock);
+        nodes.push({ element: clock, clock: clock });
+        
+        nodeCount.textContent = nodes.length;
+        log('HUB', `Added node ${nodeId} (offset: ${offset})`);
+    }
     
-    // Bind UI controls
-    document.getElementById('addFrameBtn')?.addEventListener('click', () => federation.spawnFrame());
-    document.getElementById('broadcastSyncBtn')?.addEventListener('click', () => federation.broadcastGlobalSync());
-    document.getElementById('resetAllBtn')?.addEventListener('click', () => federation.resetAllNodes());
-    document.getElementById('clearLogBtn')?.addEventListener('click', () => {
-        federation.logEntries = [];
-        federation.renderLog();
-    });
+    function removeNode() {
+        if (nodes.length === 0) return;
+        const node = nodes.pop();
+        node.element.remove();
+        nodeId--;
+        nodeCount.textContent = nodes.length;
+        log('HUB', 'Removed node');
+    }
     
-    // Periodic CRDT sync
-    setInterval(() => {
-        federation.broadcastGlobalSync();
-    }, 30000);
+    function resetAll() {
+        nodes.forEach(n => n.element.remove());
+        nodes.length = 0;
+        nodeId = 0;
+        nodeCount.textContent = 0;
+        hubLog.innerHTML = '<div class="text-slate-500 italic">Click "Spawn Node" to add clocks...</div>';
+        log('HUB', 'Reset complete');
+    }
+    
+    function broadcastSync() {
+        const masterTick = nodes[0]?.clock.tick || 0;
+        channel.postMessage({ type: 'SYNC', tick: masterTick });
+        log('FEDERATION', `Broadcast sync: tick=${masterTick}`);
+    }
+    
+    // Event listeners
+    document.getElementById('addFrameBtn').onclick = addNode;
+    document.getElementById('resetAllBtn').onclick = resetAll;
+    document.getElementById('broadcastSyncBtn').onclick = broadcastSync;
+    document.getElementById('clearLogBtn').onclick = () => {
+        hubLog.innerHTML = '<div class="text-slate-500 italic">Log cleared...</div>';
+    };
+    
+    // Add initial node
+    addNode();
 </script>
+
 </body>
 </html>
