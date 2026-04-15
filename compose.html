@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>WOLOG Composer</title>
+  <style>
+    body { margin: 0; padding: 0; font-family: 'JetBrains Mono', monospace; background: #0d1117; color: #e6edf3; }
+    #header { padding: 12px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+    #header h1 { margin: 0; font-size: 18px; color: #34d399; }
+    button { padding: 6px 12px; border-radius: 6px; background: #21262d; color: #e6edf3; border: 1px solid #30363d; cursor: pointer; font-size: 12px; }
+    button:hover { background: #30363d; }
+    button.primary { background: #059669; }
+    
+    /* Main areas */
+    #workspace { display: flex; height: calc(100vh - 180px); }
+    #canvas-area { flex: 1; position: relative; background: #0a0a12; overflow: hidden; }
+    #properties { width: 280px; border-left: 1px solid #30363d; padding: 10px; overflow: auto; }
+    #overlays { width: 250px; border-left: 1px solid #30363d; padding: 10px; overflow: auto; }
+    
+    .panel-title { color: #8b949e; margin-bottom: 10px; font-size: 11px; text-transform: uppercase; }
+    
+    /* Canvas */
+    #canvas-area svg { width: 100%; height: 100%; }
+    #canvas-area .wolog-element { cursor: move; }
+    #canvas-area .wolog-element:hover { outline: 2px solid #58a6ff; }
+    #canvas-area .selected { outline: 2px solid #34d399; }
+    
+    /* Controls */
+    #controls { padding: 10px 20px; background: #161b22; border-top: 1px solid #30363d; display: flex; gap: 15px; align-items: center; }
+    .mode-btn { padding: 6px 12px; border-radius: 4px; background: #21262d; border: 1px solid #30363d; color: #8b949e; cursor: pointer; }
+    .mode-btn.active { background: #059669; color: #fff; }
+    
+    /* Selection info */
+    .prop-row { display: flex; gap: 8px; margin: 6px 0; align-items: center; }
+    .prop-row label { width: 60px; color: #8b949e; font-size: 11px; }
+    .prop-row input { flex: 1; padding: 4px 8px; background: #0d1117; border: 1px solid #30363d; color: #e6edf3; border-radius: 4px; font-size: 12px; }
+    
+    /* Overlay list */
+    .overlay-item { padding: 6px 8px; margin: 4px 0; background: #21262d; border-radius: 4px; font-size: 12px; display: flex; justify-content: space-between; }
+    .overlay-item .type { color: #c084fc; }
+    .overlay-item .pos { color: #8b949e; }
+  </style>
+  <link href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap' rel='stylesheet'>
+</head>
+<body>
+  <div id='header'>
+    <h1>◈ WOLOG Composer</h1>
+    <button id='addRectBtn'>+ Rectangle</button>
+    <button id='addCircleBtn'>+ Circle</button>
+    <button id='addTextBtn'>+ Text</button>
+    <div style='flex:1'></div>
+    <button id='exportBtn' class='primary'>Export PG</button>
+  </div>
+  
+  <div id='workspace'>
+    <div id='canvas-area'>
+      <svg id='canvas' viewBox='0 0 800 600'>
+        <rect x='0' y='0' width='800' height='600' fill='#0a0a12' />
+      </svg>
+    </div>
+    
+    <div id='overlays'>
+      <div class='panel-title'>Overlays / Attrs</div>
+      <div id='overlay-list'></div>
+      <button id='addOverlayBtn' style='margin-top:10px;width:100%'>+ Add Overlay</button>
+    </div>
+    
+    <div id='properties'>
+      <div class='panel-title'>Selection Properties</div>
+      <div id='props-content'>
+        <div style='color:#8b949e;font-size:12px'>No selection</div>
+      </div>
+    </div>
+  </div>
+  
+  <div id='controls'>
+    <button class='mode-btn active' data-mode='select'>Select</button>
+    <button class='mode-btn' data-mode='move'>Move</button>
+    <button class='mode-btn' data-mode='overlay'>Overlay</button>
+    <button class='mode-btn' data-mode='patch'>Patch</button>
+    <div style='flex:1'></div>
+    <span style='color:#8b949e;font-size:12px'>composer = overlays + patches</span>
+  </div>
+
+  <script type='module'>
+    // Import composer module
+    import { createComposer, addOverlay, removeOverlay, applyPatch, serializeComposer } from './src/composer.ts';
+    
+    var composer = createComposer();
+    var selected = null;
+    var mode = 'select';
+    var elementId = 0;
+    
+    // Canvas SVG
+    var svg = document.getElementById('canvas');
+    
+    // Create element
+    function createElement(type, props) {
+      elementId++;
+      const id = 'el' + elementId;
+      const el = {
+        id,
+        type,
+        attrs: { ...props, id },
+        overlays: []
+      };
+      composer.elements[id] = el;
+      renderElements();
+      return el;
+    }
+    
+    // Render all elements
+    function renderElements() {
+      // Clear existing elements (keep background)
+      const existing = svg.querySelectorAll('.wolog-element');
+      existing.forEach(e => e.remove());
+      
+      Object.values(composer.elements).forEach(el => {
+        let shape;
+        if (el.type === 'rect') {
+          shape = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          shape.setAttribute('x', el.attrs.x || 0);
+          shape.setAttribute('y', el.attrs.y || 0);
+          shape.setAttribute('width', el.attrs.width || 100);
+          shape.setAttribute('height', el.attrs.height || 100);
+          shape.setAttribute('fill', el.attrs.fill || '#7c3aed');
+        } else if (el.type === 'circle') {
+          shape = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          shape.setAttribute('cx', el.attrs.cx || 0);
+          shape.setAttribute('cy', el.attrs.cy || 0);
+          shape.setAttribute('r', el.attrs.r || 30);
+          shape.setAttribute('fill', el.attrs.fill || '#059669');
+        } else if (el.type === 'text') {
+          shape = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          shape.setAttribute('x', el.attrs.x || 0);
+          shape.setAttribute('y', el.attrs.y || 20);
+          shape.textContent = el.attrs.text || 'text';
+        }
+        
+        if (shape) {
+          shape.setAttribute('id', el.id);
+          shape.setAttribute('class', 'wolog-element');
+          shape.dataset.id = el.id;
+          svg.appendChild(shape);
+        }
+      });
+      
+      updateOverlayList();
+    }
+    
+    // Update overlay list
+    function updateOverlayList() {
+      const list = document.getElementById('overlay-list');
+      const allOverlays = [];
+      
+      Object.values(composer.elements).forEach(el => {
+        el.overlays.forEach((ov, i) => {
+          allOverlays.push({ el: el.id, index: i, ...ov });
+        });
+      });
+      
+      list.innerHTML = allOverlays.map(ov => 
+        `<div class='overlay-item'>
+          <span class='type'>${ov.type}</span>
+          <span class='pos'>${ov.el || 'global'}</span>
+        </div>`
+      ).join('') || '<div style="color:#8b949e;font-size:12px">No overlays</div>';
+    }
+    
+    // Select element
+    svg.addEventListener('click', (e) => {
+      if (e.target.classList.contains('wolog-element')) {
+        selectElement(e.target.dataset.id);
+      } else {
+        selected = null;
+        renderElements();
+      }
+    });
+    
+    function selectElement(id) {
+      selected = id;
+      renderElements();
+      
+      const el = composer.elements[id];
+      if (!el) return;
+      
+      // Show properties
+      const props = document.getElementById('props-content');
+      let html = `<div class='prop-row'><label>Type</label><span>${el.type}</span></div>`;
+      
+      Object.entries(el.attrs).forEach(([k, v]) => {
+        html += `<div class='prop-row'>
+          <label>${k}</label>
+          <input value='${v}' onchange="updateProp('${id}','${k}',this.value)">
+        </div>`;
+      });
+      
+      props.innerHTML = html;
+      
+      // Highlight
+      const svgEl = svg.getElementById(id);
+      if (svgEl) svgEl.classList.add('selected');
+    }
+    
+    // Update property
+    window.updateProp = function(id, key, value) {
+      if (composer.elements[id]) {
+        composer.elements[id].attrs[key] = key === 'x' || key === 'y' || key === 'width' || key === 'height' || key === 'cx' || key === 'cy' || key === 'r' ? parseFloat(value) : value;
+        renderElements();
+      }
+    };
+    
+    // Add element buttons
+    document.getElementById('addRectBtn').addEventListener('click', () => {
+      createElement('rect', { x: 50 + Math.random() * 200, y: 50 + Math.random() * 200, width: 80, height: 60 });
+    });
+    
+    document.getElementById('addCircleBtn').addEventListener('click', () => {
+      createElement('circle', { cx: 100 + Math.random() * 200, cy: 100 + Math.random() * 200, r: 40 });
+    });
+    
+    document.getElementById('addTextBtn').addEventListener('click', () => {
+      createElement('text', { x: 100 + Math.random() * 200, y: 100, text: 'hello' });
+    });
+    
+    // Add overlay button
+    document.getElementById('addOverlayBtn').addEventListener('click', () => {
+      if (selected && composer.elements[selected]) {
+        composer.elements[selected].overlays.push({ type: 'highlight', color: '#c084fc' });
+        updateOverlayList();
+      }
+    });
+    
+    // Mode buttons
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        mode = btn.dataset.mode;
+      });
+    });
+    
+    // Export PG
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const pg = serializeComposer(composer);
+      console.log('Exported PG:', pg);
+      alert('PG exported to console');
+    });
+    
+    // Initial render
+    renderElements();
+    
+    // Expose for debugging
+    window.wologComposer = { composer, selected, renderElements };
+  </script>
+</body>
+</html>

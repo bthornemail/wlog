@@ -1,0 +1,5 @@
+alice : person age: 42
+bob : person age: 36
+charlie : person age: 28
+alice -> bob : knows since: 2020
+bob -> charlie : knows since: 2021

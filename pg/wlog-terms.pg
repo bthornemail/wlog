@@ -1,0 +1,77 @@
+# WOLOG Constitutional Terms Graph
+# Generated from CONSTITUTIONAL-SPEC.md
+# WOLOG = representative closure
+# Edge Taxonomy: activates | derives | extends | projects | indexes | hashes | contains | composes
+
+# === Root Constructor ===
+WOLOG : root meaning: representative-closure
+MONAD : prime id: 1 arity: 1
+FUNCTOR : prime id: 2 arity: 2
+XOR : prime id: 3 arity: 2
+AND : prime id: 4 arity: 2
+OR : prime id: 5 arity: 2
+NOT : prime id: 6 arity: 1
+NOR : prime id: 7 arity: 2
+NAND : prime id: 8 arity: 2
+UNIT : prime id: 9 arity: 0
+
+# === Structural Laws ===
+compose : law type: structural
+join : law type: structural
+replay : law type: structural
+index : law type: structural
+project : law type: structural
+
+# === Clock Laws ===
+sigma0 : law type: clock period: 1
+sigma7 : law type: clock period: 7
+sigma15 : law type: clock period: 15
+sigma60 : law type: clock period: 60
+omega : law type: clock period: 420
+
+# === Address Laws ===
+lane : law type: address
+channel : law type: address
+slot : law type: address
+witness : law type: address
+
+# === Projection Laws ===
+braille : law type: projection
+hexagram : law type: projection
+matrix : law type: projection
+utf : law type: projection
+html : law type: projection
+
+# === WOLOG Primitives (activates) ===
+WOLOG -> MONAD : activates
+WOLOG -> FUNCTOR : activates
+WOLOG -> XOR : activates
+WOLOG -> AND : activates
+WOLOG -> OR : activates
+
+# === WOLOG Contains Laws (contains) ===
+WOLOG -> compose : contains
+WOLOG -> join : contains
+WOLOG -> sigma0 : contains
+WOLOG -> lane : contains
+WOLOG -> braille : contains
+
+# === Structural Relations (composes) ===
+compose -> FUNCTOR : composes
+compose -> MONAD : composes
+join -> XOR : composes
+join -> OR : composes
+
+# === Clock Derivation (derives / extends) ===
+replay -> sigma0 : uses
+sigma0 -> MONAD : derives
+sigma7 -> sigma0 : extends
+sigma15 -> sigma0 : extends
+sigma60 -> sigma0 : extends
+omega -> sigma7 : combines
+omega -> sigma60 : combines
+
+# === Address Indexing (indexes) ===
+lane -> channel : indexes
+channel -> slot : indexes
+witness -> MONAD : hashes
