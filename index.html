@@ -1,251 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WOLOG Clock Demos | Federated Abacus Visual Evaluation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .demo-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .demo-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2); }
-        .iframe-preview { background: #0a0a12; border: 1px solid #1e1e2e; }
-        .version-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WOLOG</title>
+  <style>
+    :root {
+      --bg: #f4efe7;
+      --ink: #18212f;
+      --muted: #546274;
+      --card: rgba(255, 255, 255, 0.85);
+      --line: #c7d2dd;
+      --accent: #0f766e;
+      --accent-2: #8b5cf6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.16), transparent 24%),
+        radial-gradient(circle at right 20%, rgba(139, 92, 246, 0.14), transparent 26%),
+        linear-gradient(180deg, #fbf8f3 0%, var(--bg) 100%);
+    }
+    main { max-width: 1120px; margin: 0 auto; padding: 32px 20px 64px; }
+    .hero { display: grid; gap: 10px; margin-bottom: 28px; }
+    .eyebrow { font: 600 12px/1.2 "IBM Plex Mono", monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+    h1 { margin: 0; font-size: clamp(2.5rem, 7vw, 4.8rem); line-height: 0.94; }
+    .lede { max-width: 760px; font-size: 1.08rem; line-height: 1.6; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 12px 40px rgba(24, 33, 47, 0.08);
+    }
+    .card h2 { margin: 0 0 8px; font-size: 1.05rem; }
+    .card p { margin: 0 0 12px; color: var(--muted); line-height: 1.5; }
+    .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    a.button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--ink);
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+    }
+    a.button.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    section { margin-top: 26px; }
+    ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-slate-950 via-purple-950/10 to-slate-950 min-h-screen p-6">
-
-<div class="max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="mb-8 text-center">
-        <h1 class="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">WLOG Federated Clock Demos</h1>
-        <p class="text-slate-400 mt-2">Visual evaluation for deterministic abacus implementations • <span class="text-cyan-400">Web Components</span></p>
-        <div class="flex justify-center gap-4 mt-4">
-            <a href="viewer.html" class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600/20 hover:bg-purple-600/40 rounded-lg text-purple-300 text-sm transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
-                WOLOG Graph Viewer
-            </a>
-            <a href="aztec-slide-rule.html" class="inline-flex items-center gap-2 px-4 py-2 bg-amber-600/20 hover:bg-amber-600/40 rounded-lg text-amber-300 text-sm transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18m9-9H3m15.364-6.364L5.636 18.364M18.364 18.364L5.636 5.636"/></svg>
-                Aztec Slide Rule
-            </a>
-            <a href="quartet-reconciliation-demo.html" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600/20 hover:bg-emerald-600/40 rounded-lg text-emerald-300 text-sm transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-3-3v6m8-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Quartet Reconciliation Demo
-            </a>
-            <a href="wlog/" class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600/20 hover:bg-purple-600/40 rounded-lg text-purple-300 text-sm transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 16l4-16M6 20l4-16m-4-16l4 16"/></svg>
-            View WLOG Source Code
-            </a>
-        </div>
+<body>
+  <main>
+    <div class="hero">
+      <div class="eyebrow">WOLOG / product-facing repository</div>
+      <h1>Representative closure, organized for humans.</h1>
+      <div class="lede">
+        WOLOG keeps canonical identity, replay, and polyform structure upstream while
+        carriers, graphs, scenes, and browser surfaces stay downstream. This repository is
+        organized so a new contributor can find the truth quickly and understand what is active,
+        what is legacy, and what is imported.
+      </div>
+      <div class="links">
+        <a class="button primary" href="viewer.html">Open Viewer</a>
+        <a class="button" href="scene.html">Scene</a>
+        <a class="button" href="compose.html">Compose</a>
+        <a class="button" href="aztec-slide-rule.html">Aztec Slide Rule</a>
+        <a class="button" href="quartet-reconciliation-demo.html">Quartet Demo</a>
+      </div>
     </div>
 
-    <!-- Quick Comparison Table -->
-    <div class="bg-black/40 backdrop-blur rounded-2xl p-6 mb-8 border border-purple-500/20">
-        <h2 class="text-lg font-semibold text-white mb-4">Feature Comparison</h2>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="border-b border-purple-500/20">
-                        <th class="text-left py-3 px-4 text-purple-300 font-medium">Demo</th>
-                        <th class="text-center py-3 px-4 text-purple-300 font-medium">Base</th>
-                        <th class="text-center py-3 px-4 text-purple-300 font-medium">Federated</th>
-                        <th class="text-center py-3 px-4 text-purple-300 font-medium">Transport</th>
-                        <th class="text-center py-3 px-4 text-purple-300 font-medium">CRDT</th>
-                        <th class="text-center py-3 px-4 text-purple-300 font-medium">Iframes</th>
-                        <th class="text-center py-3 px-4 text-purple-300 font-medium">Best For</th>
-                    </tr>
-                </thead>
-                <tbody class="text-slate-300">
-                    <tr class="border-b border-purple-500/10">
-                        <td class="py-3 px-4 font-mono text-sm">sexagesimal-wallis-clock</td>
-                        <td class="text-center py-3 px-4">60</td>
-                        <td class="text-center py-3 px-4 text-red-400">✗</td>
-                        <td class="text-center py-3 px-4 text-slate-500">—</td>
-                        <td class="text-center py-3 px-4 text-red-400">✗</td>
-                        <td class="text-center py-3 px-4 text-red-400">✗</td>
-                        <td class="py-3 px-4 text-slate-400">Single peer evaluation</td>
-                    </tr>
-                    <tr class="border-b border-purple-500/10">
-                        <td class="py-3 px-4 font-mono text-sm">federated-sexagesimal</td>
-                        <td class="text-center py-3 px-4">60</td>
-                        <td class="text-center py-3 px-4 text-emerald-400">✓</td>
-                        <td class="text-center py-3 px-4">BroadcastChannel</td>
-                        <td class="text-center py-3 px-4 text-red-400">✗</td>
-                        <td class="text-center py-3 px-4 text-red-400">✗</td>
-                        <td class="py-3 px-4 text-slate-400">Multi-instance sync</td>
-                    </tr>
-                    <tr class="border-b border-purple-500/10">
-                        <td class="py-3 px-4 font-mono text-sm">utf32-stream-signaling</td>
-                        <td class="text-center py-3 px-4">60</td>
-                        <td class="text-center py-3 px-4 text-emerald-400">✓</td>
-                        <td class="text-center py-3 px-4">UTF-32 protocol</td>
-                        <td class="text-center py-3 px-4 text-red-400">✗</td>
-                        <td class="text-center py-3 px-4 text-red-400">✗</td>
-                        <td class="py-3 px-4 text-slate-400">Protocol testing</td>
-                    </tr>
-                    <tr class="border-b border-purple-500/10">
-                        <td class="py-3 px-4 font-mono text-sm">wormhole-hub</td>
-                        <td class="text-center py-3 px-4">60</td>
-                        <td class="text-center py-3 px-4 text-emerald-400">✓</td>
-                        <td class="text-center py-3 px-4">BroadcastChannel</td>
-                        <td class="text-center py-3 px-4 text-emerald-400">✓</td>
-                        <td class="text-center py-3 px-4 text-emerald-400">✓</td>
-                        <td class="py-3 px-4 text-slate-400">Hub + iframe spawner</td>
-                    </tr>
-                    <tr>
-                        <td class="py-3 px-4 font-mono text-sm">complete-wormhole</td>
-                        <td class="text-center py-3 px-4">60</td>
-                        <td class="text-center py-3 px-4 text-emerald-400">✓</td>
-                        <td class="text-center py-3 px-4">WebRTC + MQTT</td>
-                        <td class="text-center py-3 px-4 text-emerald-400">✓</td>
-                        <td class="text-center py-3 px-4 text-emerald-400">✓</td>
-                        <td class="py-3 px-4 text-slate-400">Full multi-peer mesh</td>
-                    </tr>
-                </tbody>
-            </table>
+    <section class="grid">
+      <article class="card">
+        <h2>Start with Docs</h2>
+        <p>The product-facing entrypoint is the docs tree, with repo structure, getting started guidance, and active surfaces listed clearly.</p>
+        <div class="links">
+          <a class="button" href="docs/product/REPO-STRUCTURE.md">Repo Structure</a>
+          <a class="button" href="docs/product/GETTING-STARTED.md">Getting Started</a>
         </div>
-    </div>
-
-    <!-- Demo Cards Grid -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        <!-- Demo 1: Sexagesimal Wallis -->
-        <div class="demo-card bg-black/40 backdrop-blur rounded-2xl border border-purple-500/20 overflow-hidden">
-            <div class="p-4 border-b border-purple-500/20">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span class="version-tag px-2 py-1 bg-cyan-900/50 text-cyan-300 rounded">v1</span>
-                        <h3 class="text-lg font-semibold text-white mt-2">Sexagesimal Wallis</h3>
-                    </div>
-                    <span class="text-xs text-slate-500">standalone</span>
-                </div>
-                <p class="text-slate-400 text-sm mt-2">Base-60 abacus with Wallis decomposition. Single peer only — no federation.</p>
-            </div>
-            <div class="iframe-preview h-48 flex items-center justify-center text-slate-500 text-sm">
-                [Standalone display]
-            </div>
-            <div class="p-4">
-                <a href="sexagesimal-wallis-clock.html" class="block w-full py-2 bg-cyan-600 hover:bg-cyan-700 rounded-lg text-center text-sm font-medium transition">Open Demo</a>
-            </div>
+      </article>
+      <article class="card">
+        <h2>Authority Boundary</h2>
+        <p>Core and polyform identity remain authoritative. Carriers and projections are downstream. The repo structure now reflects that boundary directly.</p>
+        <div class="links">
+          <a class="button" href="index.org">Catalog</a>
+          <a class="button" href="docs/specs/CONSTITUTIONAL-SPEC.md">Constitution</a>
         </div>
-
-        <!-- Demo 2: Federated Sexagesimal -->
-        <div class="demo-card bg-black/40 backdrop-blur rounded-2xl border border-purple-500/20 overflow-hidden">
-            <div class="p-4 border-b border-purple-500/20">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span class="version-tag px-2 py-1 bg-purple-900/50 text-purple-300 rounded">v2</span>
-                        <h3 class="text-lg font-semibold text-white mt-2">Federated Sexagesimal</h3>
-                    </div>
-                    <span class="text-xs text-slate-500">federated</span>
-                </div>
-                <p class="text-slate-400 text-sm mt-2">Adds step offsets for multi-instance sync. Uses BroadcastChannel.</p>
-            </div>
-            <div class="iframe-preview h-48 flex items-center justify-center text-slate-500 text-sm">
-                [Multi-instance sync]
-            </div>
-            <div class="p-4">
-                <a href="federated-sexagesimal-clock.html" class="block w-full py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-center text-sm font-medium transition">Open Demo</a>
-            </div>
+      </article>
+      <article class="card">
+        <h2>Public Surface</h2>
+        <p>Only the active product pages stay at the root. Legacy demos and embedded repos are preserved but moved out of the main path.</p>
+        <div class="links">
+          <a class="button" href="docs/product/ACTIVE-SURFACES.md">Active Surfaces</a>
+          <a class="button" href="docs/product/FEATURE-MAP.md">Feature Map</a>
         </div>
+      </article>
+    </section>
 
-        <!-- Demo 3: UTF-32 Stream Signaling -->
-        <div class="demo-card bg-black/40 backdrop-blur rounded-2xl border border-purple-500/20 overflow-hidden">
-            <div class="p-4 border-b border-purple-500/20">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span class="version-tag px-2 py-1 bg-pink-900/50 text-pink-300 rounded">v3</span>
-                        <h3 class="text-lg font-semibold text-white mt-2">UTF-32 Stream</h3>
-                    </div>
-                    <span class="text-xs text-slate-500">protocol</span>
-                </div>
-                <p class="text-slate-400 text-sm mt-2">UTF-32 signaling layer (BOM/NULL/ESC). Full protocol trace.</p>
-            </div>
-            <div class="iframe-preview h-48 flex items-center justify-center text-slate-500 text-sm">
-                [Protocol trace]
-            </div>
-            <div class="p-4">
-                <a href="utf32-stream-signaling.html" class="block w-full py-2 bg-pink-600 hover:bg-pink-700 rounded-lg text-center text-sm font-medium transition">Open Demo</a>
-            </div>
-        </div>
-
-        <!-- Demo 4: Wormhole Hub -->
-        <div class="demo-card bg-black/40 backdrop-blur rounded-2xl border border-purple-500/20 overflow-hidden">
-            <div class="p-4 border-b border-purple-500/20">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span class="version-tag px-2 py-1 bg-amber-900/50 text-amber-300 rounded">v4</span>
-                        <h3 class="text-lg font-semibold text-white mt-2">Wormhole Hub</h3>
-                    </div>
-                    <span class="text-xs text-slate-500">CRDT + iframes</span>
-                </div>
-                <p class="text-slate-400 text-sm mt-2">Spawn clock nodes in iframes. CRDT sync via BroadcastChannel.</p>
-            </div>
-            <div class="iframe-preview h-48 flex items-center justify-center text-slate-500 text-sm">
-                [Iframe spawner]
-            </div>
-            <div class="p-4">
-                <a href="wormhole-hub.html" class="block w-full py-2 bg-amber-600 hover:bg-amber-700 rounded-lg text-center text-sm font-medium transition">Open Demo</a>
-            </div>
-        </div>
-
-        <!-- Demo 5: Complete Wormhole Federation -->
-        <div class="demo-card bg-black/40 backdrop-blur rounded-2xl border border-purple-500/20 overflow-hidden">
-            <div class="p-4 border-b border-purple-500/20">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span class="version-tag px-2 py-1 bg-emerald-900/50 text-emerald-300 rounded">v5</span>
-                        <h3 class="text-lg font-semibold text-white mt-2">Complete Wormhole</h3>
-                    </div>
-                    <span class="text-xs text-slate-500">full mesh</span>
-                </div>
-                <p class="text-slate-400 text-sm mt-2">WebRTC + MQTT + Fano CRDT (7-node). Full mesh networking.</p>
-            </div>
-            <div class="iframe-preview h-48 flex items-center justify-center text-slate-500 text-sm">
-                [Full mesh]
-            </div>
-            <div class="p-4">
-                <a href="complete-wormhole-federation.html" class="block w-full py-2 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-center text-sm font-medium transition">Open Demo</a>
-            </div>
-        </div>
-
-        <!-- Demo 6: Aztec Slide Rule -->
-        <div class="demo-card bg-black/40 backdrop-blur rounded-2xl border border-amber-500/20 overflow-hidden">
-            <div class="p-4 border-b border-amber-500/20">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span class="version-tag px-2 py-1 bg-amber-900/50 text-amber-300 rounded">v6</span>
-                        <h3 class="text-lg font-semibold text-white mt-2">Aztec Slide Rule</h3>
-                    </div>
-                    <span class="text-xs text-slate-500">codepoints + carriers</span>
-                </div>
-                <p class="text-slate-400 text-sm mt-2">Virtual codepoints, basis cells, Smith/Genaille/binary instruments, and Aztec/BEEtag/polygonal carrier views.</p>
-            </div>
-            <div class="iframe-preview h-48 flex items-center justify-center text-slate-500 text-sm">
-                [Geometric computation workspace]
-            </div>
-            <div class="p-4">
-                <a href="aztec-slide-rule.html" class="block w-full py-2 bg-amber-600 hover:bg-amber-700 rounded-lg text-center text-sm font-medium transition">Open Demo</a>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- WLOG Integration Note -->
-    <div class="mt-8 bg-purple-900/20 border border-purple-500/30 rounded-xl p-6">
-        <h3 class="text-white font-semibold mb-2">WLOG Source Integration</h3>
-        <p class="text-slate-400 text-sm mb-4">These demos visualize WLOG's deterministic abacus concept. To integrate into your app:</p>
-        <div class="bg-black/50 rounded-lg p-4 font-mono text-sm text-slate-300">
-            <span class="text-purple-400">import</span> { initRuntime, runAll } <span class="text-purple-400">from</span> <span class="text-cyan-400">"./wlog"</span>;<br><br>
-            <span class="text-purple-400">const</span> wlog = { ... };<br>
-            <span class="text-purple-400">const</span> events = runAll(initRuntime(wlog));
-        </div>
-        <a href="wlog/" class="inline-block mt-4 text-sm text-cyan-400 hover:text-cyan-300">→ View wlog/src/ for TypeScript modules</a>
-    </div>
-
-</div>
-
+    <section class="card">
+      <h2>Repository Principles</h2>
+      <ul>
+        <li>`src/` contains active product code only.</li>
+        <li>`apps/` contains the active page bootstraps used by root HTML shells.</li>
+        <li>`legacy/` and `vendor/` are preserved but not part of the main product path.</li>
+        <li>`index.org` is the catalog spine for concepts, layers, and active inventory.</li>
+      </ul>
+    </section>
+  </main>
 </body>
 </html>

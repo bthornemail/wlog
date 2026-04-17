@@ -1,247 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset='utf-8'>
-  <title>WOLOG Viewer + Stream</title>
-  <script src='https://unpkg.com/vis-network/standalone/umd/vis-network.min.js'></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WOLOG Viewer</title>
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <style>
-    body { margin: 0; padding: 0; font-family: 'Arvo', 'Georgia', serif; background: #0d1117; color: #e6edf3; }
+    body { margin: 0; padding: 0; font-family: "Arvo", "Georgia", serif; background: #0d1117; color: #e6edf3; }
     #header { padding: 12px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
     #header h1 { margin: 0; font-size: 18px; color: #58a6ff; }
     select, button { padding: 6px 12px; border-radius: 6px; background: #21262d; color: #e6edf3; border: 1px solid #30363d; cursor: pointer; font-size: 13px; }
-    button { margin-left: 8px; }
     button:hover { background: #30363d; }
     #container { height: calc(100vh - 200px); width: 100%; }
-    .info { position: absolute; bottom: 10px; left: 10px; font-size: 12px; color: #8b949e; }
-    
-    /* Stream panel */
     #stream-panel { height: 150px; border-top: 1px solid #30363d; display: flex; background: #0d1117; }
     #clock-grid { flex: 1; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; overflow: auto; align-content: flex-start; }
-    #stream-log { width: 300px; border-left: 1px solid #30363d; padding: 10px; overflow: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+    #stream-log { width: 300px; border-left: 1px solid #30363d; padding: 10px; overflow: auto; font-family: "JetBrains Mono", monospace; font-size: 11px; }
     .log-entry { margin: 2px 0; }
     .log-bom { color: #c084fc; }
     .log-null { color: #22d3ee; }
     .log-esc { color: #fbbf24; }
     .log-state { color: #34d399; }
-    
-    /* Clock node styling */
+    .info { position: absolute; bottom: 10px; left: 10px; font-size: 12px; color: #8b949e; }
     wlog-clock-node { display: inline-block; }
   </style>
-  <link href='https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&display=swap' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id='header'>
-    <h1>◈ WOLOG</h1>
-    <select id='graph-select'>
-      <option value='pg/wlog-terms.pg'>Constitutional Terms</option>
-      <option value='pg/small3.pg'>Small 3-Node</option>
-      <option value='pg/knows.pg'>Knows Edge</option>
-      <option value='pg/person.pg'>Person</option>
+  <div id="header">
+    <h1>WOLOG Viewer</h1>
+    <select id="graph-select">
+      <option value="fixtures/pg/wlog-terms.pg">Constitutional Terms</option>
+      <option value="fixtures/pg/small3.pg">Small 3-Node</option>
+      <option value="fixtures/pg/knows.pg">Knows Edge</option>
+      <option value="fixtures/pg/person.pg">Person</option>
     </select>
-    <button id='addClockBtn'>+ Add Clock</button>
-    <button id='streamBtn'>Stream</button>
-    <button id='resetBtn'>Reset</button>
+    <button id="addClockBtn">Add Clock</button>
+    <button id="streamBtn">Stream</button>
+    <button id="resetBtn">Reset</button>
   </div>
-  
-  <div id='container'></div>
-  
-  <div id='stream-panel'>
-    <div id='clock-grid'></div>
-    <div id='stream-log'>
+
+  <div id="container"></div>
+
+  <div id="stream-panel">
+    <div id="clock-grid"></div>
+    <div id="stream-log">
       <div style="color: #8b949e; margin-bottom: 8px;">UTF-32 Protocol Log</div>
-      <div id='log-content'></div>
+      <div id="log-content"></div>
     </div>
   </div>
-  
-  <div class='info'>WOLOG: Graph + Stream | Primes → Laws → Relations</div>
 
-  <script src='src/components/clock-node.js' type='module'></script>
-  <script>
-    var nodeColors = {
-      root: '#f59e0b',
-      prime: '#7c3aed',
-      structural: '#059669',
-      clock: '#dc2626',
-      address: '#2563eb',
-      projection: '#d97706',
-      default: '#6b7280'
-    };
-    
-    var network = null;
-    var clockNodes = [];
-    var nodeId = 0;
-    var logOffset = 0;
-    var channel = new BroadcastChannel('wolog-stream');
-    
-    // Stream protocol constants
-    const PROTOCOL = { BOM: 0xFEFF, NULL: 0x0000, ESC: 0x001B };
-    
-    // Parse PG
-    function parseWLOG(pgText) {
-      var nodes = [], edges = [];
-      var lines = pgText.split('\n');
-      var id = 1;
-      var nodeMap = new Map();
-      
-      for (var i = 0; i < lines.length; i++) {
-        var line = lines[i].trim();
-        if (!line || line.indexOf('#') === 0) continue;
-        
-        var edgeMatch = line.match(/^(\S+)\s*->\s*(\S+)\s*:\s*(\S+)$/);
-        if (edgeMatch) {
-          var source = edgeMatch[1], target = edgeMatch[2], rel = edgeMatch[3];
-          if (!nodeMap.has(source)) { nodeMap.set(source, id++); nodes.push({ id: nodeMap.get(source), label: source }); }
-          if (!nodeMap.has(target)) { nodeMap.set(target, id++); nodes.push({ id: nodeMap.get(target), label: target }); }
-          edges.push({ from: nodeMap.get(source), to: nodeMap.get(target), label: rel });
-          continue;
-        }
-        
-        var nodeMatch = line.match(/^(\S+)\s*:\s*(\S+)(?:\s+(.+))?$/);
-        if (nodeMatch && line.indexOf('->') === -1) {
-          var label = nodeMatch[1], type = nodeMatch[2], props = nodeMatch[3];
-          if (!nodeMap.has(label)) {
-            nodeMap.set(label, id++);
-            var node = { id: nodeMap.get(label), label: label, type: type };
-            if (props) {
-              props.split(/\s+/).forEach(function(kv) {
-                var p = kv.split(':');
-                if (p.length === 2 && p[0] && p[1]) node[p[0]] = p[1];
-              });
-            }
-            nodes.push(node);
-          }
-        }
-      }
-      return { nodes: nodes, edges: edges };
-    }
-    
-    // Load graph
-    function loadGraph() {
-      var select = document.getElementById('graph-select');
-      var filename = select.value;
-      var container = document.getElementById('container');
-      
-      fetch('./' + filename).then(function(r) { return r.text(); }).then(function(text) {
-        var result = parseWLOG(text);
-        
-        var nodeData = result.nodes.map(function(n) {
-          return {
-            id: n.id,
-            label: n.label,
-            title: JSON.stringify(n),
-            color: { background: nodeColors[n.type] || nodeColors.default, border: '#ffffff' },
-            shape: 'dot',
-            size: n.type === 'prime' ? 25 : (n.type === 'root' ? 30 : 18),
-            font: { color: '#ffffff', face: 'Arvo', size: 14 }
-          };
-        });
-        
-        var edgeData = result.edges.map(function(e, i) {
-          return {
-            id: i,
-            from: e.from,
-            to: e.to,
-            label: e.label,
-            font: { color: '#8b949e', size: 11 },
-            arrows: 'to',
-            smooth: { type: 'continuous' }
-          };
-        });
-        
-        var data = {
-          nodes: new vis.DataSet(nodeData),
-          edges: new vis.DataSet(edgeData)
-        };
-        
-        var options = {
-          nodes: { borderWidth: 2, shadow: true },
-          edges: { width: 2 },
-          physics: {
-            enabled: true,
-            solver: 'forceAtlas2Based',
-            forceAtlas2Based: { gravitationalConstant: -50, springLength: 100, springConstant: 0.01 }
-          },
-          interaction: { hover: true, tooltipDelay: 200 }
-        };
-        
-        if (network) network.destroy();
-        network = new vis.Network(container, data, options);
-      }).catch(function(err) {
-        console.error('Error loading graph:', err);
-      });
-    }
-    
-    // Log functions
-    function logMsg(type, msg, cls) {
-      var content = document.getElementById('log-content');
-      var entry = document.createElement('div');
-      entry.className = 'log-entry ' + (cls || '');
-      entry.textContent = '[' + type + '] ' + msg;
-      content.insertBefore(entry, content.firstChild);
-      while (content.children.length > 20) content.lastChild.remove();
-    }
-    
-    // BroadcastChannel handlers
-    channel.onmessage = function(e) {
-      if (e.data.type === 'BOM') logMsg('BOM', 'Session reset', 'log-bom');
-      else if (e.data.type === 'NULL') logMsg('NULL', 'tick ' + e.data.tick, 'log-null');
-      else if (e.data.type === 'ESC') logMsg('ESC', 'payload', 'log-esc');
-      else if (e.data.type === 'STATE') logMsg('STATE', JSON.stringify(e.data.payload), 'log-state');
-    };
-    
-    // Add clock node
-    function addClock() {
-      nodeId++;
-      var clock = document.createElement('wlog-clock-node');
-      clock.setAttribute('offset', (nodeId - 1) * 840);
-      clock.setAttribute('label', 'NODE' + nodeId);
-      clock.style.height = '100px';
-      
-      clock.addEventListener('tick', function(e) {
-        var tick = e.detail.federatedTick;
-        // NULL on every tick
-        channel.postMessage({ type: 'NULL', tick: tick });
-        // ESC every 60 ticks
-        if (tick % 60 === 0 && tick > 0) {
-          channel.postMessage({ type: 'ESC', tick: tick, payload: { state: 'HEARTBEAT' } });
-        }
-        // BOM every 420 ticks
-        if (tick % 420 === 0 && tick > 0) {
-          channel.postMessage({ type: 'BOM', tick: tick });
-        }
-      });
-      
-      document.getElementById('clock-grid').appendChild(clock);
-      clockNodes.push({ id: nodeId, elem: clock });
-    }
-    
-    // Stream controls
-    function startStream() {
-      channel.postMessage({ type: 'BOM', tick: 0 });
-      logMsg('BOM', 'Stream started', 'log-bom');
-      // Start all clocks
-      clockNodes.forEach(function(n) {
-        n.elem.removeAttribute('paused');
-      });
-    }
-    
-    function resetAll() {
-      clockNodes.forEach(function(n) { n.elem.remove(); });
-      clockNodes = [];
-      nodeId = 0;
-      document.getElementById('clock-grid').innerHTML = '';
-      document.getElementById('log-content').innerHTML = '';
-      logMsg('STATE', 'Reset complete', 'log-state');
-    }
-    
-    // Event listeners
-    document.getElementById('graph-select').addEventListener('change', loadGraph);
-    document.getElementById('addClockBtn').addEventListener('click', addClock);
-    document.getElementById('streamBtn').addEventListener('click', startStream);
-    document.getElementById('resetBtn').addEventListener('click', resetAll);
-    
-    // Initialize
-    loadGraph();
-  </script>
+  <div class="info">WOLOG: graph viewer and stream surface</div>
+
+  <script type="module" src="/apps/viewer.ts"></script>
 </body>
 </html>

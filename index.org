@@ -88,15 +88,16 @@ Examples:
 - =Aztec= -> short for =Aztec embedding= only when context is already binary/replay
 - =viewer shell= -> page-level projection, not core viewer law
 
-*** Barcode Trinity
+*** Barcode Quartet
 
 | Carrier | Role | Purpose |
 |---------|------|---------|
 | Aztec | Serializable Sprite | Identity, persistence (what it IS) |
 | MaxiCode | Scene Projection | Tilemap/voxel/hexel/pixel (how it APPEARS) |
 | BEEtag | Message | Physical/computational transport (how it MOVES) |
+| Code16K | Record Stack | Ordered stacked records (how it ORDERS exchange) |
 
-Flow: =kernel -> AZTEC (serialize) -> MAXI (project) -> BEE (transport)=
+Flow: =kernel -> AZTEC (serialize) -> MAXI (project) -> BEE (transport) -> Code16K (record stack)=
 
 ** Controlled Vocabularies
 
@@ -494,29 +495,29 @@ projection -> authority
 ** Core Documents
 
 - [[file:README.md][README.md]] :: short project overview
-- [[file:CONSTITUTIONAL-SPEC.md][CONSTITUTIONAL-SPEC.md]] :: frozen substrate law
-- [[file:ARCHITECTURE.md][ARCHITECTURE.md]] :: stack, vocabulary, semantic overlay pipeline
-- [[file:OMICRON-MATH-MODEL.md][OMICRON-MATH-MODEL.md]] :: Omicron timing/math notes
+- [[file:docs/specs/CONSTITUTIONAL-SPEC.md][docs/specs/CONSTITUTIONAL-SPEC.md]] :: frozen substrate law
+- [[file:docs/specs/ARCHITECTURE.md][docs/specs/ARCHITECTURE.md]] :: stack, vocabulary, semantic overlay pipeline
+- [[file:docs/research/OMICRON-MATH-MODEL.md][docs/research/OMICRON-MATH-MODEL.md]] :: Omicron timing/math notes
 - [[file:AGENTS.md][AGENTS.md]] :: local working instructions
 
 ** TypeScript Runtime
 
 - [[file:src/index.ts][src/index.ts]] :: public API barrel
-- [[file:src/types.ts][src/types.ts]] :: core typed model
-- [[file:src/runtime.ts][src/runtime.ts]] :: runtime stepping and initialization
-- [[file:src/eval.ts][src/eval.ts]] :: opcode evaluation
-- [[file:src/scene.ts][src/scene.ts]] :: deterministic event -> scene reduction
-- [[file:src/render-svg.ts][src/render-svg.ts]] :: SVG projection
-- [[file:src/render-canvas.ts][src/render-canvas.ts]] :: canvas projection
-- [[file:src/world-builder.ts][src/world-builder.ts]] :: world/frame construction
-- [[file:src/frame.ts][src/frame.ts]] :: frozen frame artifacts
-- [[file:src/viewport.ts][src/viewport.ts]] :: local view state
-- [[file:src/composer.ts][src/composer.ts]] :: overlay/composition layer
-- [[file:src/worker-protocol.ts][src/worker-protocol.ts]] :: worker message boundary
+- [[file:src/core/types.ts][src/core/types.ts]] :: core typed model
+- [[file:src/core/runtime.ts][src/core/runtime.ts]] :: runtime stepping and initialization
+- [[file:src/core/eval.ts][src/core/eval.ts]] :: opcode evaluation
+- [[file:src/core/scene.ts][src/core/scene.ts]] :: deterministic event -> scene reduction
+- [[file:src/projection/render-svg.ts][src/projection/render-svg.ts]] :: SVG projection
+- [[file:src/projection/render-canvas.ts][src/projection/render-canvas.ts]] :: canvas projection
+- [[file:src/core/world-builder.ts][src/core/world-builder.ts]] :: world/frame construction
+- [[file:src/core/frame.ts][src/core/frame.ts]] :: frozen frame artifacts
+- [[file:src/core/viewport.ts][src/core/viewport.ts]] :: local view state
+- [[file:src/ui/composer.ts][src/ui/composer.ts]] :: overlay/composition layer
+- [[file:src/core/worker-protocol.ts][src/core/worker-protocol.ts]] :: worker message boundary
 
 ** Binary / Replay / Embedding
 
-- [[file:src/binary.ts][src/binary.ts]] :: BitView, DataStream, Aztec bitwise embedding replay, XOR open/close, trace formatting, SHACL snippets
+- [[file:src/core/binary.ts][src/core/binary.ts]] :: BitView, DataStream, Aztec bitwise embedding replay, XOR open/close, trace formatting, SHACL snippets
 
 Current constitutional rule in code:
 - no polyform length field
@@ -525,7 +526,7 @@ Current constitutional rule in code:
 
 ** Semantic Web Integration
 
-- [[file:src/semantic-web.ts][src/semantic-web.ts]] :: BCP 47 parsing/normalization, matching helpers, Turtle serialization, SHACL helpers
+- [[file:src/semantic/semantic-web.ts][src/semantic/semantic-web.ts]] :: BCP 47 parsing/normalization, matching helpers, Turtle serialization, SHACL helpers
 
 Current scope:
 - well-formed BCP 47 parsing
@@ -540,8 +541,8 @@ Deferred scope:
 
 ** Components
 
-- [[file:src/components/clock-node.js][src/components/clock-node.js]] :: reusable clock component
-- [[file:src/components/protocol-layer.js][src/components/protocol-layer.js]] :: protocol/UI support layer
+- [[file:src/ui/components/clock-node.js][src/ui/components/clock-node.js]] :: reusable clock component
+- [[file:src/ui/components/protocol-layer.js][src/ui/components/protocol-layer.js]] :: protocol/UI support layer
 
 ** Pages and Shells
 
@@ -549,8 +550,13 @@ Deferred scope:
 - [[file:viewer.html][viewer.html]] :: viewer shell
 - [[file:scene.html][scene.html]] :: scene inspector shell
 - [[file:compose.html][compose.html]] :: composition shell
-- [[file:src/pages/main.ts][src/pages/main.ts]] :: generic page bootstrap
-- [[file:src/pages/clock-demo.ts][src/pages/clock-demo.ts]] :: clock demo bootstrap
+- [[file:aztec-slide-rule.html][aztec-slide-rule.html]] :: barcode quartet / basis carrier shell
+- [[file:quartet-reconciliation-demo.html][quartet-reconciliation-demo.html]] :: canonical-hash proof shell
+- [[file:apps/viewer.ts][apps/viewer.ts]] :: graph viewer bootstrap
+- [[file:apps/scene.ts][apps/scene.ts]] :: scene/frame bootstrap
+- [[file:apps/compose.ts][apps/compose.ts]] :: authoring/composition bootstrap
+- [[file:apps/aztec-slide-rule.ts][apps/aztec-slide-rule.ts]] :: Aztec slide rule bootstrap
+- [[file:apps/quartet-reconciliation-demo.ts][apps/quartet-reconciliation-demo.ts]] :: quartet proof bootstrap
 
 Rule:
 - pages orchestrate
@@ -559,19 +565,19 @@ Rule:
 
 ** Property Graph Surface
 
-- [[file:pg/person.pg][pg/person.pg]]
-- [[file:pg/knows.pg][pg/knows.pg]]
-- [[file:pg/small3.pg][pg/small3.pg]]
-- [[file:pg/wlog-terms.pg][pg/wlog-terms.pg]]
+- [[file:fixtures/pg/person.pg][fixtures/pg/person.pg]]
+- [[file:fixtures/pg/knows.pg][fixtures/pg/knows.pg]]
+- [[file:fixtures/pg/small3.pg][fixtures/pg/small3.pg]]
+- [[file:fixtures/pg/wlog-terms.pg][fixtures/pg/wlog-terms.pg]]
 
 These are downstream graph surfaces, not constitutional truth.
 
 ** Other Implementation Threads
 
-- [[file:c/wolog.c][c/wolog.c]] :: C Omicron ISA runtime
-- [[file:c/swar.h][c/swar.h]] :: SWAR helpers
-- [[file:hs/WOLOG/Polyomino.hs][hs/WOLOG/Polyomino.hs]] :: Haskell polyomino / Omicron model
-- [[file:src/domino-visualizer.ts][src/domino-visualizer.ts]] :: browser polyomino/domino visualizer
+- [[file:legacy/experiments/c/wolog.c][legacy/experiments/c/wolog.c]] :: C Omicron ISA runtime
+- [[file:legacy/experiments/c/swar.h][legacy/experiments/c/swar.h]] :: SWAR helpers
+- [[file:legacy/experiments/hs/WOLOG/Polyomino.hs][legacy/experiments/hs/WOLOG/Polyomino.hs]] :: Haskell polyomino / Omicron model
+- [[file:src/projection/domino-visualizer.ts][src/projection/domino-visualizer.ts]] :: browser polyomino/domino visualizer
 
 * Catalog Records
 
@@ -677,17 +683,18 @@ replay-first execution law.
 :STATUS:   active
 :LAYER:    constitutional
 :CLASS:    400
-:MAIN:     virtual codepoint basis algebra, instruments, and barcode trinity
-:ADDED:    svg projection, bee tag, polygonal carrier, aztec carrier, maxi code carrier
+:MAIN:     virtual codepoint basis algebra, instruments, and barcode quartet
+:ADDED:    svg projection, bee tag, polygonal carrier, aztec carrier, maxi code carrier, code16k carrier
 :TAGS:     authority polyform binary semantic-web type-system
-:FILE:     AZTEC-SLIDE-RULE-LIBRARY.md
+:FILE:     docs/specs/AZTEC-SLIDE-RULE-LIBRARY.md
 :END:
 
 Spec-first library definition for the virtual codepoint space, basis-cell
-algebra, functional tag pointers, instrument builders, and barcode trinity:
+algebra, functional tag pointers, instrument builders, and barcode quartet:
 - Aztec = Serializable Sprite (identity/persistence)
 - MaxiCode = Scene Projection (tilemap, voxel, hexel, pixel)
 - BEEtag = Message (physical print/scan or wire transport)
+- Code16K = Record Stack (dense structured payload and trace surface)
 
 ** Record: Polyform Core
 :PROPERTIES:
@@ -699,7 +706,7 @@ algebra, functional tag pointers, instrument builders, and barcode trinity:
 :MAIN:     core polyform types, transforms, witnesses, replay
 :ADDED:    bitboard carrier, connectivity checks
 :TAGS:     polyform runtime replay trace
-:FILE:     src/polyform.ts
+:FILE:     src/polyform/polyform.ts
 :END:
 
 Starter implementation of the polyform substrate. Keep this small and
@@ -715,7 +722,7 @@ constitutional until the transform algebra is frozen.
 :MAIN:     reserved public interfaces for the WOLOG language
 :ADDED:    surface forms, decorators, continuations, core IR
 :TAGS:     polyform replay authority type-system
-:FILE:     src/language.ts
+:FILE:     src/polyform/language.ts
 :END:
 
 Constitutional type layer for the WOLOG language. Keeps surface/core contracts
@@ -729,15 +736,17 @@ stable without committing to a parser or full executor yet.
 :LAYER:    constitutional
 :CLASS:    400
 :MAIN:     virtual codepoint basis algebra and carrier/instrument API
-:ADDED:    svg builders, codepoint packing, barcode trinity (Aztec/MaxiCode/BEEtag)
+:ADDED:    svg builders, codepoint packing, barcode quartet (Aztec/MaxiCode/BEEtag/Code16K)
 :TAGS:     authority polyform binary type-system
-:FILE:     src/aztec-slide-rule.ts
+:FILE:     src/carriers/aztec-slide-rule.ts
 :END:
 
 Constitutional TS layer for the Aztec slide rule library. It freezes the
 public type surface for codepoints, basis cells, instruments, and carriers:
 - AztecCarrier = Serializable Sprite
 - MaxiCodeCarrier = Scene Projection (tilemap, voxel, hexel, pixel)
+- BeeTagCarrier = Message (packet transport and atom carrier)
+- Code16KCarrier = Record Stack (dense structured payload and witness surface)
 - BeeTagCarrier = Message (physical/computational transport)
 
 ** Record: Aztec Slide Rule Viewer
@@ -748,13 +757,13 @@ public type surface for codepoints, basis cells, instruments, and carriers:
 :LAYER:    projection
 :CLASS:    700
 :MAIN:     browser inspector for codepoints, instruments, and carriers
-:ADDED:    svg demo, basis-cell readout, barcode trinity (CLASS/INTERFACE/MESSAGE)
+:ADDED:    svg demo, basis-cell readout, barcode quartet (identity/projection/message/record-stack)
 :TAGS:     viewer component polyform binary
-:FILE:     src/components/aztec-slide-rule-viewer.ts
+:FILE:     src/ui/components/aztec-slide-rule-viewer.ts
 :END:
 
 Reusable browser component for inspecting the Aztec slide rule library.
-Shows basis-cell SVG, instrument surfaces, and the barcode trinity projection.
+Shows basis-cell SVG, instrument surfaces, and the barcode quartet projection.
 
 ** Record: Core Types
 :PROPERTIES:
@@ -856,7 +865,7 @@ Secondary rendering surface parallel to SVG.
 :MAIN:     binary helpers and Aztec replay embeddings
 :ADDED:    xor open-close, traces, shacl snippets
 :TAGS:     binary replay trace xor polyform shacl
-:FILE:     src/binary.ts
+:FILE:     src/core/binary.ts
 :END:
 
 Current bitwise replay carrier. This is where HALT-terminated embedding logic
@@ -872,7 +881,7 @@ and binary framing helpers live.
 :MAIN:     BCP 47, Turtle, RDF, SHACL integration
 :ADDED:    carrier serialization (Aztec/MaxiCode/BEEtag -> Turtle)
 :TAGS:     semantic-web rdf turtle shacl bcp47 type-contract carrier
-:FILE:     src/semantic-web.ts
+:FILE:     src/semantic/semantic-web.ts
 :END:
 
 Semantic integration surface. Active and useful now, but still pre-registry and
@@ -883,7 +892,7 @@ Features:
 - Turtle triple serialization helpers
 - SHACL shape definitions
 - Aztec embedding serialization
-- Carrier serialization (Aztec/MaxiCode/BEEtag -> Turtle)
+- Carrier serialization (Aztec/MaxiCode/BEEtag/Code16K -> Turtle)
 
 BCP 47 note:
 - treat language tags as a pure structural contract first
@@ -904,14 +913,14 @@ Carrier URI scheme:
 :MAIN:     OWL class hierarchy and properties for WOLOG domain
 :ADDED:    carrier classes, class hierarchy, cardinality constraints
 :TAGS:     semantic-web owl rdf ontology class-hierarchy
-:FILE:     src/ontology.ts
+:FILE:     src/semantic/ontology.ts
 :END:
 
 Declarative OWL class hierarchy for the WOLOG domain.
 
 Classes:
 - Structural: Polyform, BasisFamily, DegreeClass, RankClass, GroupClass, NormalizedForm
-- Carriers: Carrier, AztecCarrier, MaxiCodeCarrier, BeeTagCarrier
+- Carriers: Carrier, AztecCarrier, MaxiCodeCarrier, BeeTagCarrier, Code16KCarrier
 - Instruments: Instrument, SmithChart, GenailleRods, BinaryGuessSurface
 - Witness/Replay: Witness, ReplayLog, ReplayEntry
 - Artifacts: Artifact, TopologyDescriptor, CombinatorialDescriptor
@@ -920,7 +929,7 @@ Classes:
 Properties:
 - Structural: hasBasisFamily, hasDegreeClass, hasRankClass, hasGroupClass
 - Projection: projectsTo, hasProjection, hasInstrument, carrierRole
-- Carrier roles: serializableSprite, sceneProjection, transportMessage
+- Carrier roles: serializableSprite, sceneProjection, transportMessage, recordStack
 - Replay: hasWitness, hasReplayLog, tick, opcode, halted
 
 ** Record: SPARQL Query Builder
@@ -933,14 +942,14 @@ Properties:
 :MAIN:     SPARQL query builder and carrier/polyform query helpers
 :ADDED:    SELECT/CONSTRUCT builders, pre-defined queries
 :TAGS:     sparql semantic-web rdf query
-:FILE:     src/sparql.ts
+:FILE:     src/semantic/sparql.ts
 :END:
 
 Lightweight SPARQL helpers for polyforms, carriers, and traces.
 
 Features:
 - SELECT/CONSTRUCT query builders
-- Pre-defined carrier queries (Aztec/MaxiCode/BEEtag)
+- Pre-defined carrier queries (Aztec/MaxiCode/BEEtag/Code16K)
 - Pre-defined polyform queries (by family, replay)
 - Virtual codepoint queries (by alias, family, group)
 - =WOLOG_SPARQL_PREFIXES= for standard namespace prefixes
@@ -957,13 +966,13 @@ Ready for full RDF resources integration.
 :MAIN:     RDF resources - real-world entities identified by URIs
 :ADDED:    resource types, URI generation, carrier integration
 :TAGS:     semantic-web rdf resource uri ontology
-:FILE:     src/resources.ts
+:FILE:     src/semantic/resources.ts
 :END:
 
 Real-world entities identified by URIs and described via carriers.
 
 Resource Types:
-- PhysicalObject :: Physical objects with Aztec identity + MaxiCode scene + BEEtag transport
+- PhysicalObject :: Physical objects with Aztec identity + MaxiCode scene + BEEtag transport + Code16K record stack
 - DigitalArtifact :: Digital entities with BEEtag payload
 - Scene :: Composed scenes with MaxiCode projection
 - TransformEvent :: Transform operations with provenance
@@ -996,7 +1005,7 @@ Resource Creation:
 :MAIN:     world and frame construction
 :ADDED:    capture, refresh, diff
 :TAGS:     frame scene runtime
-:FILE:     src/world-builder.ts
+:FILE:     src/core/world-builder.ts
 :END:
 
 Important for frozen artifacts and future frame workflows.
@@ -1011,7 +1020,7 @@ Important for frozen artifacts and future frame workflows.
 :MAIN:     SKOS concepts aligned with Unicode addressing and duodecimal classification
 :ADDED:    concept schemes, duodecimal (base-12) digits, Unicode address mapping
 :TAGS:     semantic-web skos knowledge-organization unicode duodecimal
-:FILE:     src/skos.ts
+:FILE:     src/semantic/skos.ts
 :END:
 
 Simple Knowledge Organization System for WOLOG concepts.
@@ -1039,7 +1048,7 @@ Alignment:
 :MAIN:     RIF rule interchange format for polyform inference
 :ADDED:    polyform inference rules, Turtle serialization, CHC support
 :TAGS:     semantic-web rif rules inference horn-clause
-:FILE:     src/rif.ts
+:FILE:     src/semantic/rif.ts
 :END:
 
 Rule Interchange Format for polyform inference rules.
@@ -1047,7 +1056,7 @@ Rule Interchange Format for polyform inference rules.
 Features:
 - RIF BLD/Core dialect support
 - Atomic and compound formulas (And, Or, Not, Implies, Equiv)
-- Constrained Horn Clause (CHC) support aligned with Barcode Trinity
+- Constrained Horn Clause (CHC) support aligned with Barcode Quartet
 - Polyform inference rules (degree, family, carriers)
 - Turtle serialization of rules
 - Pre-defined polyform rules
@@ -1059,12 +1068,13 @@ Constrained Horn Clause (CHC) alignment:
    φ (constraint) = Aztec (defines identity, "what it IS")
    P (predicate)  = MaxiCode (defines projection, "how it APPEARS")
    x (variable)   = BEEtag (defines message, "how it MOVES")
+   r (record)     = Code16K (defines stacked record payload, "how it REMAINS TRACEABLE")
 
 CHC Rules:
 - wolog:chc:aztec-constrains-maxi
 - wolog:chc:bee-carries-identity
 - wolog:chc:maxi-is-projection
-- wolog:chc:full-trinity
+- wolog:chc:full-quartet
 
 ** Record: Logic and Proof Layer
 :PROPERTIES:
@@ -1076,7 +1086,7 @@ CHC Rules:
 :MAIN:     Logic and proof inference engine for polyforms
 :ADDED:    formula evaluation, proof verification, query builder
 :TAGS:     semantic-web logic proof inference
-:FILE:     src/logic.ts
+:FILE:     src/semantic/logic.ts
 :END:
 
 Logic and proof inference for polyforms.
@@ -1103,7 +1113,7 @@ Pre-defined Rules:
 :MAIN:     16 Boolean functions ↔ polyform basis types isomorphism
 :ADDED:    MaxiCode 15-bit identity, CHC alignment, closure functions
 :TAGS:     semantic-web polyform boolean truth-table horn-clause
-:FILE:     src/polynomial-truth-table.ts
+:FILE:     src/polyform/polynomial-truth-table.ts
 :END:
 
 Polynomial Truth Table: the isomorphism between Wittgenstein's 16 Boolean functions
@@ -1144,9 +1154,9 @@ Boolean Function ↔ Polyform Basis Mapping:
 :LAYER:    constitutional
 :CLASS:    500
 :MAIN:     kinematic computation system: geometry + logic + time
-:ADDED:    Aztec/MaxiCode/BEEtag trinity, 5040-tick cycle, FEFF/FFFE inversion
+:ADDED:    Aztec/MaxiCode/BEEtag/Code16K quartet, 5040-tick cycle, FEFF/FFFE inversion
 :TAGS:     omicron polyform binary semantic-web rewriting
-:FILE:     src/omicron-machine.ts
+:FILE:     src/core/omicron-machine.ts
 :END:
 
 The Omicron Optical-Rewriting Machine is a 5-tuple:
@@ -1358,7 +1368,7 @@ Authoring-oriented browser surface; still needs component-level extraction.
 :MAIN:     reusable clock node component
 :ADDED:    page composition and future component stack
 :TAGS:     component omicron page
-:FILE:     src/components/clock-node.js
+:FILE:     src/ui/components/clock-node.js
 :END:
 
 One of the clearest current examples of component-level browser structure.
@@ -1388,7 +1398,7 @@ Downstream graph surface expressing the constitutional vocabulary.
 :MAIN:     C Omicron ISA runtime
 :ADDED:    SWAR experiments and trace logging
 :TAGS:     omicron binary runtime legacy
-:FILE:     c/wolog.c
+:FILE:     legacy/experiments/c/wolog.c
 :END:
 
 Important reference and implementation thread, but not the current browser-side
@@ -1404,7 +1414,7 @@ source of truth.
 :MAIN:     Haskell polyomino and Omicron model
 :ADDED:    proof-like combinatorial reference
 :TAGS:     polyform omicron duodecimal legacy
-:FILE:     hs/WOLOG/Polyomino.hs
+:FILE:     legacy/experiments/hs/WOLOG/Polyomino.hs
 :END:
 
 Useful mathematical thread and historical substrate, but not the main active
@@ -1414,7 +1424,7 @@ runtime path.
 
 ** Stable
 
-- TypeScript runtime modules in =src/=
+- TypeScript product modules organized by domain in =src/core=, =src/polyform=, =src/carriers=, =src/semantic=, =src/projection=, and =src/ui=
 - SVG/canvas scene rendering
 - binary embedding helpers
 - semantic-web helper layer
@@ -1463,18 +1473,18 @@ runtime path.
 ** Semantic Web
 
 Core Abstractions:
-- [X] define OWL ontology for type hierarchy (BasisFamily, Carrier, Instrument) =src/ontology.ts=
-- [X] SKOS knowledge organization aligned with Unicode + duodecimal =src/skos.ts=
-- [X] RIF rule layer (rules for polyform inference) =src/rif.ts=
-- [X] Logic/Proof layer (inference engine) =src/logic.ts=
-- [X] Polynomial Truth Table (16 Boolean functions ↔ polyform basis) =src/polynomial-truth-table.ts=
+- [X] define OWL ontology for type hierarchy (BasisFamily, Carrier, Instrument) =src/semantic/ontology.ts=
+- [X] SKOS knowledge organization aligned with Unicode + duodecimal =src/semantic/skos.ts=
+- [X] RIF rule layer (rules for polyform inference) =src/semantic/rif.ts=
+- [X] Logic/Proof layer (inference engine) =src/semantic/logic.ts=
+- [X] Polynomial Truth Table (16 Boolean functions ↔ polyform basis) =src/polyform/polynomial-truth-table.ts=
 
 Adapters:
-- [X] Carrier -> Turtle serializer (Aztec/MaxiCode/BEEtag to RDF) =src/semantic-web.ts=
+- [X] Carrier -> Turtle serializer (Aztec/MaxiCode/BEEtag/Code16K to RDF) =src/semantic/semantic-web.ts=
 - [X] SHACL shapes for carrier validation (Aztec/MaxiCode/BEEtag shapes) =CARRIER_SHACL_TURTLE=
-- [X] SPARQL query builder (SELECT/CONSTRUCT + pre-defined queries) =src/sparql.ts=
-- [X] RDF resources (real-world entities identified by URIs) =src/resources.ts=
-- [X] SKOS concept schemes (BasisFamily, CarrierRole, Instrument, Duodecimal) =src/skos.ts=
+- [X] SPARQL query builder (SELECT/CONSTRUCT + pre-defined queries) =src/semantic/sparql.ts=
+- [X] RDF resources (real-world entities identified by URIs) =src/semantic/resources.ts=
+- [X] SKOS concept schemes (BasisFamily, CarrierRole, Instrument, Duodecimal) =src/semantic/skos.ts=
 - [ ] Polyform -> SPARQL queryable (query polyforms as graph)
 - [ ] add registry-backed BCP 47 validity
 
@@ -1483,13 +1493,13 @@ Adapters:
 - [X] RIF rules (polyform inference)
 - [X] Logic/Proof (inference engine)
 - [X] Polynomial Truth Table (Boolean functions ↔ polyomino basis isomorphism)
-- [X] Omicron Optical-Rewriting Machine (kinematic computation) =src/omicron-machine.ts=
+- [X] Omicron Optical-Rewriting Machine (kinematic computation) =src/core/omicron-machine.ts=
 
 Alignment Model:
 Unicode codepoint -> duodecimal notation -> SKOS concept notation -> RIF rules -> Logic inference -> Polynomial Truth Table -> Omicron Machine
 
 Example Flow:
-U+1D4D (ᵍ) -> ᘔ5 -> squares.concept -> degree-from-cells -> Polyform(?p) ^ wolog:hasCellCount(?p, 4) -> AND ↔ Domino -> Aztec/Maxi/BEE trinity -> 5040-tick kinematic cycle
+U+1D4D (ᵍ) -> ᘔ5 -> squares.concept -> degree-from-cells -> Polyform(?p) ^ wolog:hasCellCount(?p, 4) -> AND ↔ Domino -> Aztec/Maxi/BEE/Code16K quartet -> 5040-tick kinematic cycle
 
 Truth Table ↔ Polyform Isomorphism:
 - 16 Boolean functions (Wittgenstein's truth table) = closed set under composition (Post's lattice)
@@ -1544,7 +1554,7 @@ Carrier URI scheme:
 - Which browser pages should become components first?
 - What deserves a stable RDF/SHACL vocabulary now, and what is still too fluid?
 - Where should replay traces live so they are visible across binary, scene, and semantic layers?
-- How do we serialize the Barcode Trinity (Aztec/MaxiCode/BEEtag) as semantic triples?
+- How do we serialize the Barcode Quartet (Aztec/MaxiCode/BEEtag/Code16K) as semantic triples?
 - Should MaxiCode's tilemap/voxel/hexel projections have their own URI schemes?
 
 * Update Protocol
@@ -1557,3 +1567,29 @@ When we touch the repo, update this file in one or more of these ways:
 - record newly verified functionality
 - prune completed backlog items
 - add cross-links to the docs or files that became authoritative
+
+* Generated Catalog
+
+** Active Tree
+- `src/carriers`
+- `src/core`
+- `src/index.ts`
+- `src/polyform`
+- `src/projection`
+- `src/semantic`
+- `src/ui`
+
+** Active Apps
+- `apps/aztec-slide-rule.ts`
+- `apps/compose.ts`
+- `apps/quartet-reconciliation-demo.ts`
+- `apps/scene.ts`
+- `apps/viewer.ts`
+
+** Legacy
+- `legacy/demos-html`
+- `legacy/experiments`
+
+** Vendor
+- `vendor/blitzboard`
+- `vendor/wlog-legacy-package`

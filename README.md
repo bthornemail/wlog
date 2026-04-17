@@ -1,61 +1,43 @@
-# WOLOG - Representative Closure
+# WOLOG
 
-The constitutional computational substrate.
+WOLOG is a constitutional computational substrate where canonical identity,
+replay, and polyform structure stay upstream, while carriers, scenes, graphs,
+and browser surfaces remain downstream projections.
 
-## Core Concept
+## Repository Shape
 
-```
-WOLOG = representative closure
-```
+The repo is organized to be readable from the top level:
 
-One stands for many without loss. The root constructor from which all primitives derive.
+- `docs/` product docs first, then specs, research, and references
+- `src/` active product code only
+- `apps/` active browser page bootstraps
+- `fixtures/` sample graphs and shared example artifacts
+- `tools/` maintenance and catalog scripts
+- `legacy/` preserved demos and experiments not in the active product surface
+- `vendor/` embedded external or legacy package trees
 
-## Architecture
+## Active Surfaces
 
-```
-WOLOG
-├── src/           # TypeScript runtime modules
-├── components/    # Web Components
-├── pg/            # Property Graph files
-└── [pages]        # Vite entry points
-```
+- `index.html`
+- `viewer.html`
+- `scene.html`
+- `compose.html`
+- `aztec-slide-rule.html`
+- `quartet-reconciliation-demo.html`
 
-## Development
+## Start Here
+
+- Repo structure: `docs/product/REPO-STRUCTURE.md`
+- Getting started: `docs/product/GETTING-STARTED.md`
+- Feature map: `docs/product/FEATURE-MAP.md`
+- Active surfaces: `docs/product/ACTIVE-SURFACES.md`
+- Catalog and authority index: `index.org`
+
+## Build
 
 ```bash
-npm install     # Install dependencies
-npm run dev    # Start dev server (port 3000)
-npm run build  # Build for production
+npm install
+npm run check:repo
+npm run typecheck
+npm run build
 ```
-
-## Pages
-
-- `index.html` - Clock demos landing
-- `viewer.html` - WOLOG graph viewer
-
-## Property Graph
-
-The constitutional graph is defined in `pg/wlog-terms.pg`:
-
-```
-WOLOG (root)
-  ├─ activates → MONAD, FUNCTOR, XOR, AND, OR
-  ├─ contains → compose, join, sigma0, lane, braille
-  └─ ...structural/clock/address/projection laws
-```
-
-## Edge Taxonomy
-
-| Relation | Meaning |
-| -------- | ------- |
-| `activates` | primitive is available within WOLOG |
-| `contains` | law is part of WOLOG |
-| `composes` | structural law transforms |
-| `derives` | clock derives from primitive |
-| `extends` | clock extends base period |
-| `indexes` | address indexes channel |
-
-## Links
-
-- Viewer: `/viewer.html`
-- Spec: `/CONSTITUTIONAL-SPEC.md`

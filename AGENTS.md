@@ -45,20 +45,15 @@ We moved toward a Vite + TypeScript architecture.
 
 `/root/wlog/src/`
 
-Contains modular TS runtime pieces:
+Contains domain-organized TS modules:
 
-* `runtime.ts` → pure evaluator / stepping
-* `eval.ts` → opcode execution
-* `scene.ts` → deterministic scene reduction
-* `render-svg.ts` → SVG renderer
-* `render-canvas.ts` → Canvas renderer
-* `world-builder.ts` → world/frame model
-* `frame.ts` → frozen frame artifacts
-* `viewport.ts` → local ephemeral view state
-* `composer.ts` → overlays / authored attrs / composition
-* `worker-protocol.ts` → worker message boundary
+* `core/` → evaluator, runtime, scene, frame, viewport, binary/control-plane foundations
+* `polyform/` → polyform model and WOLOG language
+* `carriers/` → codepoints, carriers, barcode quartet, reconciliation
+* `semantic/` → ontology, RDF/Turtle, SHACL, SKOS, SPARQL, RIF, resources
+* `projection/` → SVG/canvas and downstream visual surfaces
+* `ui/` → reusable browser components and composition helpers
 * `index.ts` → public API barrel
-* `components/clock-node.js` → reusable Web Component
 
 ---
 
@@ -147,7 +142,7 @@ Value
 Stored in:
 
 ```text
-/root/wlog/pg/
+/root/wlog/fixtures/pg/
 ```
 
 ---
@@ -345,3 +340,9 @@ Graphs define structure.
 Views define projection.
 WOLOG preserves closure.
 ```
+
+## Repo Structure Rule
+
+Do not add new root-level demo HTML files outside the approved active shells.
+New product-facing pages must use the active app/bootstrap structure and be
+registered intentionally.

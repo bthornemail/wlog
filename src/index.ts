@@ -9,7 +9,7 @@ export type {
   Expr, Value, Opcode, LOG, Program,
   Marker, Clock, ConfigSeed, Header, WLOG,
   Config, Runtime, Event,
-} from "./types.js";
+} from "./core/types.js";
 
 export {
   O, I, slot, b8, ZERO_B8,
@@ -19,7 +19,7 @@ export {
   Sync, Wait, RotateL, RotateR, Join, Split,
   Emit, Hash, Map, Load, SetMode, SetLine, SetPoint,
   Done, Step, log_,
-} from "./types.js";
+} from "./core/types.js";
 
 // Bit helpers
 export {
@@ -27,38 +27,38 @@ export {
   bitsNot, bitsAnd, bitsOr, bitsXor,
   rotL8, rotR8,
   b8ToUint8, uint8ToB8, b8ToString,
-} from "./bits.js";
+} from "./core/bits.js";
 
 // Evaluator
-export { evalExpr, runOpcode } from "./eval.js";
+export { evalExpr, runOpcode } from "./core/eval.js";
 
 // Runtime
-export { seedConfig, stepRuntime, runAll, runLazy, initRuntime } from "./runtime.js";
+export { seedConfig, stepRuntime, runAll, runLazy, initRuntime } from "./core/runtime.js";
 
 // DOM renderer (browser-only)
-export type { Grid } from "./dom.js";
-export { buildGrid, applyEventToDOM, WLOG_CSS } from "./dom.js";
+export type { Grid } from "./ui/dom.js";
+export { buildGrid, applyEventToDOM, WLOG_CSS } from "./ui/dom.js";
 
 // Infinite canvas
-export type { PeerMessage, SerializedLOG, ChunkStore } from "./canvas.js";
+export type { PeerMessage, SerializedLOG, ChunkStore } from "./core/canvas.js";
 export {
   pixelToAddress, addressToPixel,
   serializeLOG, deserializeLOG, makePeerMessage,
   tickLamport,
   programAppend, programFromLogs, programToLogs,
   emptyChunkStore, getChunk, putChunk, applyPeerMessage,
-} from "./canvas.js";
+} from "./core/canvas.js";
 
 // Scene model and rendering
-export type { Scene, SceneCell, SceneFrame } from "./scene.js";
-export { emptyScene, reduceEvent } from "./scene.js";
+export type { Scene, SceneCell, SceneFrame } from "./core/scene.js";
+export { emptyScene, reduceEvent } from "./core/scene.js";
 
-export { slotToGridXY, gridXYToSlot } from "./layout.js";
+export { slotToGridXY, gridXYToSlot } from "./core/layout.js";
 
-export { renderSceneSvg } from "./render-svg.js";
-export { renderSceneCanvas } from "./render-canvas.js";
+export { renderSceneSvg } from "./projection/render-svg.js";
+export { renderSceneCanvas } from "./projection/render-canvas.js";
 
-export { stepEngine, runEngine, initSceneEngine } from "./engine.js";
+export { stepEngine, runEngine, initSceneEngine } from "./core/engine.js";
 
 // Polyform core
 export type {
@@ -71,7 +71,7 @@ export type {
   PolyWitness,
   PolyBounds,
   PolyBitboard64,
-} from "./polyform.js";
+} from "./polyform/polyform.js";
 export {
   polyCell,
   polyCellKey,
@@ -84,7 +84,7 @@ export {
   replayPolyTransforms,
   polyformToBitboard64,
   isPolyformConnected,
-} from "./polyform.js";
+} from "./polyform/polyform.js";
 
 // WOLOG language
 export type {
@@ -122,7 +122,7 @@ export type {
   WOLOGCoreOp,
   WOLOGCoreProgram,
   WOLOGReplayEntry,
-} from "./language.js";
+} from "./polyform/language.js";
 export {
   WOLOG_REQUIRED_CONTINUATIONS,
   WOLOG_RESERVED_CONTINUATIONS,
@@ -132,7 +132,7 @@ export {
   definePolyformProgram,
   decoratorTargets,
   requiredContinuations,
-} from "./language.js";
+} from "./polyform/language.js";
 
 // Aztec slide rule library
 export type {
@@ -185,7 +185,7 @@ export type {
   CarrierEnvelope,
   CarrierReconcileResult,
   PolygonCell,
-} from "./aztec-slide-rule.js";
+} from "./carriers/aztec-slide-rule.js";
 export {
   BASIS_FAMILIES,
   CODEPOINT_GROUPS,
@@ -239,14 +239,14 @@ export {
   reconcileCarriersAgainstCanonical,
   renderWorkedExample,
   MAXICODE_MODES,
-} from "./aztec-slide-rule.js";
+} from "./carriers/aztec-slide-rule.js";
 
 // Binary / Aztec embedding layer
 export type {
   AztecInstruction,
   AztecTraceEntry,
   AztecReplayResult,
-} from "./binary.js";
+} from "./core/binary.js";
 export {
   BitView,
   DataStream,
@@ -276,7 +276,7 @@ export {
   aztecOpcodeName,
   AZTEC_EMBEDDING_SHACL_TURTLE,
   AZTEC_TRACE_SHACL_TURTLE,
-} from "./binary.js";
+} from "./core/binary.js";
 
 // Semantic web / BCP 47 integration
 export type {
@@ -289,7 +289,7 @@ export type {
   TurtleTriple,
   SemanticAztecResource,
   CarrierResource,
-} from "./semantic-web.js";
+} from "./semantic/semantic-web.js";
 export {
   isWellFormedLanguageTag,
   asWellFormedLanguageTag,
@@ -319,7 +319,7 @@ export {
   CARRIER_SHACL_TURTLE,
   CODE16K_CARRIER_SHACL_TURTLE,
   SEMANTIC_WEB_SHACL_TURTLE,
-} from "./semantic-web.js";
+} from "./semantic/semantic-web.js";
 
 // SPARQL query builder
 export type {
@@ -330,7 +330,7 @@ export type {
   SparqlTriplePattern,
   SparqlConstructQuery,
   SparqlQuery,
-} from "./sparql.js";
+} from "./semantic/sparql.js";
 export {
   WOLOG_SPARQL_PREFIXES,
   spqVar,
@@ -359,17 +359,17 @@ export {
   queryReplays,
   queryCodepointsByFamily,
   queryCodepointByAlias,
-} from "./sparql.js";
+} from "./semantic/sparql.js";
 
 // OWL Ontology (class hierarchy and properties)
-export type { WOLOGClass, WOLOGObjectProperty, WOLOGCarrierRole } from "./ontology.js";
+export type { WOLOGClass, WOLOGObjectProperty, WOLOGCarrierRole } from "./semantic/ontology.js";
 export {
   WOLOG_ONTOLOGY_PREFIXES,
   WOLOG_ONTOLOGY_TURTLE,
   CARRIER_ONTOLOGY_TURTLE,
   WOLOG_CLASS_HIERARCHY,
   WOLOG_CARRIER_ROLES,
-} from "./ontology.js";
+} from "./semantic/ontology.js";
 
 // RDF Resources (real-world entities identified by URIs)
 export type {
@@ -385,7 +385,7 @@ export type {
   WOLOGResource,
   GeoLocation,
   SceneBounds,
-} from "./resources.js";
+} from "./semantic/resources.js";
 export {
   WOLOG_RESOURCE_PREFIXES,
   RESOURCE_NAMESPACES,
@@ -402,7 +402,7 @@ export {
   serializeResources,
   getResourceSummary,
   RESOURCE_QUERIES,
-} from "./resources.js";
+} from "./semantic/resources.js";
 
 // SKOS Knowledge Organization
 export type {
@@ -414,7 +414,7 @@ export type {
   SkosCollection,
   SkosResource,
   DuodecimalDigit,
-} from "./skos.js";
+} from "./semantic/skos.js";
 export {
   SKOS_PREFIXES,
   SKOS_NAMESPACES,
@@ -445,23 +445,23 @@ export {
   SKOS_QUERIES,
   notationToUnicodeAddress,
   unicodeAddressToNotation,
-} from "./skos.js";
+} from "./semantic/skos.js";
 
 // Frame types (WLOG = river, frames = photographs)
 export type {
   WorldScene, ChunkScene, FrameSpec, FrameSnapshot,
   BoundedScene, CellSnapshot, Bounds,
   RenderSource, FrameStatus, FrameDiff,
-} from "./frame.js";
+} from "./core/frame.js";
 
-export type { ChunkKey } from "./frame.js";
+export type { ChunkKey } from "./core/frame.js";
 export {
   chunkKey as chunkKey,
   parseChunkKey,
   emptyBounds,
   expandBounds,
   boundsArea,
-} from "./frame.js";
+} from "./core/frame.js";
 
 // World builder (builds WorldScene from WLOG, captures frames)
 export {
@@ -470,11 +470,11 @@ export {
   getFrameStatus,
   refreshFrame,
   diffFrames,
-} from "./world-builder.js";
+} from "./core/world-builder.js";
 
 // Viewport (zoom, pan, focus)
-export type { ViewportState, UIMode } from "./viewport.js";
-export { Viewport } from "./viewport.js";
+export type { ViewportState, UIMode } from "./core/viewport.js";
+export { Viewport } from "./core/viewport.js";
 
 // Composer (data-attribute overlay layer)
 export type {
@@ -483,7 +483,7 @@ export type {
   AttrPatch,
   CellOverlay,
   ComposerMode,
-} from "./composer.js";
+} from "./ui/composer.js";
 export {
   emptyComposerState,
   toggleSelection,
@@ -499,7 +499,7 @@ export {
   isSelected,
   isHovered,
   getSelectedCount,
-} from "./composer.js";
+} from "./ui/composer.js";
 
 // RIF Rule Layer
 export type {
@@ -521,7 +521,7 @@ export type {
   HornAtom,
   HornTerm,
   HornClauseRule,
-} from "./rif.js";
+} from "./semantic/rif.js";
 export {
   RIF_PREFIXES,
   rifTerm,
@@ -552,7 +552,7 @@ export {
   BARCODE_QUARTET_CHC_RULES,
   BARCODE_TRINITY_CHC_RULES,
   POLYFORM_CHC_RULES,
-} from "./rif.js";
+} from "./semantic/rif.js";
 
 // Quartet reconciliation proof demo
 export type {
@@ -561,10 +561,10 @@ export type {
   QuartetDeterminismReceipt,
   QuartetReconciliationProofReceipt,
   QuartetReconciliationProofArtifact,
-} from "./quartet-reconciliation-demo.js";
+} from "./carriers/quartet-reconciliation-demo.js";
 export {
   buildQuartetReconciliationProofDemo,
-} from "./quartet-reconciliation-demo.js";
+} from "./carriers/quartet-reconciliation-demo.js";
 
 // Logic and Proof Layer
 export type {
@@ -580,7 +580,7 @@ export type {
   PolyformBinding,
   Constraint,
   Query,
-} from "./logic.js";
+} from "./semantic/logic.js";
 export {
   LOGIC_PREFIXES,
   uri as logicUri,
@@ -607,7 +607,7 @@ export {
   SEMANTIC_INFERENCE_RULES,
   deriveProperties,
   verifyProof,
-} from "./logic.js";
+} from "./semantic/logic.js";
 
 // Polynomial Truth Table (Boolean functions ↔ polyform basis)
 export type {
@@ -624,7 +624,7 @@ export type {
   TruthTableCell,
   PolyformAsTruthTable,
   PolyformBasisName,
-} from "./polynomial-truth-table.js";
+} from "./polyform/polynomial-truth-table.js";
 export {
   BOOLEAN_FUNCTION_NAMES,
   TRUTH_TABLES,
@@ -647,7 +647,7 @@ export {
   basisNameToFunction,
   polyformToHornTerm,
   TRUTH_TABLE_TO_POLYFORM,
-} from "./polynomial-truth-table.js";
+} from "./polyform/polynomial-truth-table.js";
 
 // Omicron Optical-Rewriting Machine
 export type {
@@ -666,7 +666,7 @@ export type {
   PolyformBasisType,
   BitMetaCircular,
   RewriteRule,
-} from "./omicron-machine.js";
+} from "./core/omicron-machine.js";
 export {
   MASTER_PERIOD,
   SYNC_INTERVAL,
@@ -710,7 +710,7 @@ export {
   OOM_SHACL_TURTLE,
   twoOfFiveEncode,
   twoOfFiveDecode,
-} from "./omicron-machine.js";
+} from "./core/omicron-machine.js";
 
 // Canonical Control Plane
 export type {
@@ -728,7 +728,7 @@ export type {
   ControlAddress,
   ChannelName,
   NumSysName,
-} from "./control-plane.js";
+} from "./core/control-plane.js";
 export {
   CONTROL_MARKER,
   FLAG_BIT,
@@ -786,4 +786,4 @@ export {
   CONTROL_PLANE_PREFIXES,
   controlWordToTurtle,
   controlMatrixToTurtle,
-} from "./control-plane.js";
+} from "./core/control-plane.js";

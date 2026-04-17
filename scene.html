@@ -1,189 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset='utf-8'>
-  <title>WOLOG Scene Viewer</title>
-  <script src='https://unpkg.com/vis-network/standalone/umd/vis-network.min.js'></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WOLOG Scene</title>
   <style>
-    body { margin: 0; padding: 0; font-family: 'JetBrains Mono', monospace; background: #0d1117; color: #e6edf3; }
+    body { margin: 0; padding: 0; font-family: "JetBrains Mono", monospace; background: #0d1117; color: #e6edf3; }
     #header { padding: 12px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
     #header h1 { margin: 0; font-size: 18px; color: #58a6ff; }
     select, button { padding: 6px 12px; border-radius: 6px; background: #21262d; color: #e6edf3; border: 1px solid #30363d; cursor: pointer; font-size: 13px; }
     button:hover { background: #30363d; }
     #container { height: calc(100vh - 250px); width: 100%; }
-    
-    /* Scene panel */
     #scene-panel { height: 200px; border-top: 1px solid #30363d; display: flex; background: #0d1117; }
     #scene-inspector { flex: 1; padding: 10px; overflow: auto; font-size: 12px; }
-    #frame-list { width: 250px; border-left: 1px solid #30363d; padding: 10px; overflow: auto; }
-    #viewport-info { width: 250px; border-left: 1px solid #30363d; padding: 10px; overflow: auto; }
-    
+    #frame-list, #viewport-info { width: 250px; border-left: 1px solid #30363d; padding: 10px; overflow: auto; }
     .section-title { color: #8b949e; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; }
-    .json-key { color: #c084fc; }
-    .json-value { color: #34d399; }
-    .json-string { color: #fbbf24; }
-    
     .info { position: absolute; bottom: 10px; left: 10px; font-size: 12px; color: #8b949e; }
   </style>
-  <link href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id='header'>
-    <h1>◈ WOLOG Scene</h1>
-    <select id='renderer-select'>
-      <option value='svg'>SVG Renderer</option>
-      <option value='canvas'>Canvas Renderer</option>
-      <option value='dom'>DOM Renderer</option>
+  <div id="header">
+    <h1>WOLOG Scene</h1>
+    <select id="renderer-select">
+      <option value="svg">SVG Renderer</option>
+      <option value="canvas">Canvas Renderer</option>
     </select>
-    <select id='view-select'>
-      <option value='live'>Live World</option>
-      <option value='frame'>Frozen Frame</option>
-      <option value='diff'>Compare</option>
+    <select id="view-select">
+      <option value="live">Live World</option>
+      <option value="frame">Frozen Frame</option>
+      <option value="diff">Compare</option>
     </select>
-    <button id='stepBtn'>Step</button>
-    <button id='resetBtn'>Reset</button>
-    <button id='captureBtn'>Capture Frame</button>
+    <button id="stepBtn">Step</button>
+    <button id="resetBtn">Reset</button>
+    <button id="captureBtn">Capture Frame</button>
   </div>
-  
-  <div id='container'></div>
-  
-  <div id='scene-panel'>
-    <div id='scene-inspector'>
-      <div class='section-title'>Scene State</div>
-      <pre id='scene-json'></pre>
-    </div>
-    <div id='frame-list'>
-      <div class='section-title'>Captured Frames</div>
-      <div id='frames'></div>
-    </div>
-    <div id='viewport-info'>
-      <div class='section-title'>Viewport</div>
-      <pre id='viewport-json'></pre>
-    </div>
-  </div>
-  
-  <div class='info'>WOLOG: Scene Inspector | Runtime → Event → Scene → Renderer</div>
 
-  <script type='module'>
-    // Import from src modules (will work with Vite)
-    import { createRuntime, stepRuntime } from './src/runtime.ts';
-    import { emptyScene, reduceEvent } from './src/scene.ts';
-    import { renderSceneSvg } from './src/render-svg.ts';
-    
-    // State
-    var runtime = createRuntime();
-    var scene = emptyScene();
-    var world = { revision: 0, chunks: new Map(), createdAt: Date.now() };
-    var frames = [];
-    var currentRenderer = 'svg';
-    
-    // Container
-    var container = document.getElementById('container');
-    
-    // Render
-    function render() {
-      container.innerHTML = '';
-      try {
-        if (currentRenderer === 'svg') {
-          const svgStr = renderSceneSvg(scene, { cellSize: 32, padding: 12 });
-          container.innerHTML = svgStr;
-        } else {
-          // Canvas fallback - render SVG to canvas via data URL
-          const svgStr = renderSceneSvg(scene, { cellSize: 32, padding: 12 });
-          const canvas = document.createElement('canvas');
-          canvas.width = container.clientWidth;
-          canvas.height = container.clientHeight;
-          const ctx = canvas.getContext('2d');
-          const img = new Image();
-          img.onload = () => ctx.drawImage(img, 0, 0);
-          img.src = 'data:image/svg+xml;base64,' + btoa(svgStr);
-          container.appendChild(canvas);
-        }
-      } catch (e) {
-        console.error('Render error:', e);
-      }
-      updateInspectors();
-    }
-    
-    // Update inspectors
-    function updateInspectors() {
-      // Scene JSON
-      const sceneJson = document.getElementById('scene-json');
-      sceneJson.textContent = JSON.stringify(scene, (k, v) => {
-        if (typeof v === 'object' && v !== null) return v;
-        return v;
-      }, 2);
-      
-      // Syntax highlight
-      sceneJson.innerHTML = sceneJson.textContent
-        .replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
-        .replace(/: "([^"]+)"/g, ': <span class="json-string">"$1"</span>')
-        .replace(/: ([0-9]+)/g, ': <span class="json-value">$1</span>');
-      
-      // Viewport JSON  
-      const viewportJson = document.getElementById('viewport-json');
-      viewportJson.textContent = JSON.stringify({
-        width: container.clientWidth,
-        height: container.clientHeight,
-        zoom: world.zoom || 1,
-        offset: world.offset || { x: 0, y: 0 }
-      }, null, 2);
-      
-      // Frame list
-      const framesEl = document.getElementById('frames');
-      framesEl.innerHTML = frames.map((f, i) => 
-        `<div style="margin:4px 0;cursor:pointer;color:#58a6ff" onclick="loadFrame(${i})">Frame ${i}</div>`
-      ).join('') || '<div style="color:#8b949e">No frames captured</div>';
-    }
-    
-    // Step runtime
-    function step() {
-      const result = stepRuntime(runtime);
-      if (result) {
-        runtime = result[0];
-        const event = result[1];
-        scene = reduceEvent(scene, event);
-      }
-      render();
-    }
-    
-    // Reset
-    function reset() {
-      runtime = createRuntime();
-      scene = emptyScene();
-      render();
-    }
-    
-    // Capture frame
-    function capture() {
-      frames.push({ scene: JSON.parse(JSON.stringify(scene)), tick: Date.now() });
-      updateInspectors();
-    }
-    
-    // Load frame
-    window.loadFrame = function(i) {
-      const frame = frames[i];
-      if (frame) {
-        scene = frame.scene;
-        render();
-      }
-    };
-    
-    // Event listeners
-    document.getElementById('renderer-select').addEventListener('change', (e) => {
-      currentRenderer = e.target.value;
-      render();
-    });
-    
-    document.getElementById('stepBtn').addEventListener('click', step);
-    document.getElementById('resetBtn').addEventListener('click', reset);
-    document.getElementById('captureBtn').addEventListener('click', capture);
-    
-    // Initial render
-    render();
-    
-    // Expose for debugging
-    window.wologScene = { runtime, scene, world, step, reset, capture, render };
-  </script>
+  <div id="container"></div>
+
+  <div id="scene-panel">
+    <div id="scene-inspector">
+      <div class="section-title">Scene State</div>
+      <pre id="scene-json"></pre>
+    </div>
+    <div id="frame-list">
+      <div class="section-title">Captured Frames</div>
+      <div id="frames"></div>
+    </div>
+    <div id="viewport-info">
+      <div class="section-title">Viewport</div>
+      <pre id="viewport-json"></pre>
+    </div>
+  </div>
+
+  <div class="info">WOLOG: scene inspector</div>
+
+  <script type="module" src="/apps/scene.ts"></script>
 </body>
 </html>

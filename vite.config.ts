@@ -12,6 +12,7 @@ export default defineConfig({
         viewer: resolve(__dirname, 'viewer.html'),
         scene: resolve(__dirname, 'scene.html'),
         compose: resolve(__dirname, 'compose.html'),
+        aztecSlideRule: resolve(__dirname, 'aztec-slide-rule.html'),
         quartetReconciliationDemo: resolve(__dirname, 'quartet-reconciliation-demo.html')
       }
     }
@@ -19,7 +20,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
-      '@components': resolve(__dirname, 'src/components')
+      '@components': resolve(__dirname, 'src/ui/components')
     }
   },
   server: {
