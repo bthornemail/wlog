@@ -5,10 +5,9 @@
  * This demonstrates the new TS bootstrap pattern.
  */
 
-import { createRuntime } from '../runtime';
-import { createScene, reduceScene, Scene } from '../scene';
-import { renderSvg } from '../render-svg';
-import { WorldConfig } from '../types';
+import { createRuntime, stepRuntime } from "../runtime";
+import { createScene, reduceScene, type Scene } from "../scene";
+import { renderSvg } from "../render-svg";
 
 class WologClockDemo {
   private runtime: ReturnType<typeof createRuntime>;
@@ -23,7 +22,7 @@ class WologClockDemo {
       throw new Error(`Container #${containerId} not found`);
     }
     
-    this.container = container as HTMLElement;
+    this.container = container;
     this.runtime = createRuntime();
     this.scene = createScene();
     
@@ -32,9 +31,7 @@ class WologClockDemo {
   }
 
   private render() {
-    this.container.innerHTML = '';
-    const svg = renderSvg(this.scene, this.container);
-    this.container.appendChild(svg);
+    renderSvg(this.scene, this.container);
   }
 
   start(tickMs: number = 100) {
@@ -42,13 +39,14 @@ class WologClockDemo {
     this.running = true;
     
     this.intervalId = window.setInterval(() => {
-      // Step runtime
-      this.runtime = this.runtime.step();
-      
-      // Reduce into scene
-      this.scene = reduceScene(this.scene, []);
-      
-      // Re-render
+      const result = stepRuntime(this.runtime);
+      if (result === null) {
+        this.stop();
+        return;
+      }
+      const [nextRuntime, event] = result;
+      this.runtime = nextRuntime;
+      this.scene = reduceScene(this.scene, event);
       this.render();
     }, tickMs);
   }
@@ -68,32 +66,31 @@ class WologClockDemo {
 
 // Bootstrap
 function init() {
-  const demoEl = document.getElementById('clock-demo');
+  const demoEl = document.getElementById("clock-demo");
   if (!demoEl) {
-    console.warn('#clock-demo not found, skipping WOLOG init');
+    console.warn("#clock-demo not found, skipping WOLOG init");
     return;
   }
 
-  const demo = new WologClockDemo('clock-demo');
+  const demo = new WologClockDemo("clock-demo");
   
   // Expose for debugging
   (window as any).wologClockDemo = demo;
   
   // Start button
-  const startBtn = document.getElementById('start-btn');
-  startBtn?.addEventListener('click', () => demo.start());
+  const startBtn = document.getElementById("start-btn");
+  startBtn?.addEventListener("click", () => demo.start());
   
-  // Stop button
-  const stopBtn = document.getElementById('stop-btn');
-  stopBtn?.addEventListener('click', () => demo.stop());
+  const stopBtn = document.getElementById("stop-btn");
+  stopBtn?.addEventListener("click", () => demo.stop());
   
-  console.log('WOLOG Clock Demo initialized');
+  console.log("WOLOG Clock Demo initialized");
 }
 
 // Run
-if (typeof document !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
   } else {
     init();
   }

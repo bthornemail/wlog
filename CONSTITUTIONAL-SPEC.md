@@ -282,6 +282,37 @@ witness(MONAD) → digest
 witness(FUNCTOR) → digest
 ```
 
+### 4.5 aztec_embedding
+
+```
+aztec(a) ≡ version · replay-bytes · HALT
+```
+
+Law: **Self-terminating bitwise replay** — polyform structure is carried by the replay stream, not by a stored length/order field.
+
+Frozen rule:
+- permitted replay verbs: `SHL`, `SHR`, `ROL`, `ROR`, `FLIP`, `XOR`, `HALT`
+- no explicit polyform length/count field
+- decoding is deterministic from the byte stream alone
+
+```
+aztec(seed) → SHL 1 → XOR m → ROL 3 → HALT
+```
+
+### 4.6 open_close
+
+```
+close(a,k) ≡ hex(XOR(bytes(a), k))
+open(h,k)  ≡ bytes(XOR(unhex(h), k))
+```
+
+Law: **XOR involution** — the same key opens what it closes.
+
+```
+open(close(a,k), k) → a
+close(open(h,k), k) → h
+```
+
 ---
 
 ## 5. Projection Laws
@@ -355,6 +386,23 @@ WLOG → <canvas>
 FUNCTOR → <svg>
 ```
 
+### 5.6 trace_log
+
+```
+→ trace_log ≡ append-only replay witness
+```
+
+Law: **Replayed authority** — the authoritative account of a polyform embedding is the ordered trace of bitwise transitions.
+
+Each entry records:
+- program counter
+- opcode
+- before mask
+- after mask
+- witness accumulator
+
+The trace is replayable without consulting any downstream surface.
+
 ---
 
 ## 6. Constitutional Dependencies
@@ -403,6 +451,9 @@ No downstream law modifies upstream primitives.
 | **I4** | ω completes — ↺ω produces closure then STOP |
 | **I5** | Projection is lossless — decode(encode(a)) = a |
 | **I6** | No privilege — all laws are internal |
+| **I7** | Aztec embeddings are HALT-terminated; no polyform length field is constitutional |
+| **I8** | Open/close uses XOR involution over the byte stream |
+| **I9** | Trace order is authoritative; surfaces are downstream projections |
 
 ---
 
@@ -429,6 +480,16 @@ omega   = lcm sigma7.period sigma60.period  -- 420
 
 -- Address
 data Address = Lane Int | Channel Int | Slot (Int,Int) | Witness Prime
+
+-- Aztec replay
+data AztecOp = SHL Int | SHR Int | ROL Int | ROR Int | FLIP | XOR Word64 | HALT
+data AztecTrace = AztecTrace
+  { pc      :: Int
+  , opcode  :: AztecOp
+  , before  :: Word64
+  , after   :: Word64
+  , witness :: Word64
+  }
 
 -- Projections
 data Projection = Braille | Hexagram | Matrix | UTF | HTML | WebGL

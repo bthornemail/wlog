@@ -1,0 +1,1559 @@
+#+TITLE: WOLOG Codebase Index
+#+AUTHOR: Codex + User
+#+STARTUP: overview
+
+* WOLOG
+
+WOLOG = representative closure
+
+Engineering alias: WLOG
+
+This file is the working index for the repository. It is meant to help us
+organize the codebase without turning pages or surfaces into the source of
+truth.
+
+Canonical direction:
+
+#+begin_example
+constitutional core
+-> typed graph AST
+-> PG surface
+-> scene/frame projections
+-> browser/UI surfaces
+#+end_example
+
+* Catalog System
+
+This file now serves two roles:
+
+- repo navigation index
+- controlled catalog for files, concepts, and surfaces
+
+Cataloging principle:
+
+- each important thing gets one primary record
+- related uses are captured as added entries
+- naming should follow authority control, not drift by convenience
+
+** Record Template
+
+Use this template for new file or concept records:
+
+#+begin_example
+** Record: <label>
+:PROPERTIES:
+:ID:       wolog:<kind>:<name>
+:TYPE:     module | page | component | document | graph | runtime | experiment
+:STATUS:   active | stable | in-motion | experimental | legacy | reference
+:LAYER:    constitutional | type | runtime | replay | graph | frame | projection | page | semantic | reference
+:CLASS:    000-900 shelf band
+:MAIN:     primary home / primary purpose
+:ADDED:    comma-separated secondary homes
+:TAGS:     space-separated controlled terms
+:FILE:     relative/path
+:END:
+#+end_example
+
+** Authority Control
+
+*** Canonical Names
+
+- WOLOG :: canonical project/theory/documentation name
+- WLOG :: engineering alias / shorthand only
+- Omicron :: timing / ISA / periodic alignment thread
+- Polyform :: structural arrangement of lawful cells; can act as data, program object, packet, or witness depending on layer
+- Polynomial :: symbolic law over values, coordinates, or forms
+- Predicate :: recognizer or constraint over forms, laws, or values
+- Program :: executable replay over forms/laws/predicates
+- PG :: property-graph surface
+- Aztec embedding :: bitwise replay carrier, not source of truth
+- semantic web :: RDF / Turtle / SHACL / URI integration layer
+- language tag :: BCP 47 identifier treated as a pure type contract boundary
+- WOLOG language :: direct surface language lowered into a CPS core IR
+- virtual codepoint :: dual-address 40-bit identity plus symbolic alias for basis-cell algebra
+- scene :: deterministic reduced world view from runtime events
+- frame :: frozen capture artifact derived from world/scene state
+- viewport :: local ephemeral viewing state
+- composer :: authoring / overlay / patch surface
+
+*** Alias Policy
+
+- record aliases explicitly when they are useful
+- prefer one canonical spelling in docs and code comments
+- keep legacy names searchable, but mark them as aliases
+
+Examples:
+
+- =WLOG= -> alias of =WOLOG=
+- =Aztec= -> short for =Aztec embedding= only when context is already binary/replay
+- =viewer shell= -> page-level projection, not core viewer law
+
+*** Barcode Trinity
+
+| Carrier | Role | Purpose |
+|---------|------|---------|
+| Aztec | Serializable Sprite | Identity, persistence (what it IS) |
+| MaxiCode | Scene Projection | Tilemap/voxel/hexel/pixel (how it APPEARS) |
+| BEEtag | Message | Physical/computational transport (how it MOVES) |
+
+Flow: =kernel -> AZTEC (serialize) -> MAXI (project) -> BEE (transport)=
+
+** Controlled Vocabularies
+
+*** TYPE
+
+- =document=
+- =module=
+- =page=
+- =component=
+- =graph=
+- =runtime=
+- =experiment=
+- =reference=
+
+*** STATUS
+
+- =active= :: current source of truth or directly used path
+- =stable= :: expected to remain with only incremental change
+- =in-motion= :: current path but under active redesign
+- =experimental= :: real work, not yet frozen
+- =legacy= :: older thread retained for reference or migration
+- =reference= :: background source, note, or external-facing support file
+
+*** LAYER
+
+- =constitutional=
+- =type=
+- =runtime=
+- =replay=
+- =graph=
+- =frame=
+- =projection=
+- =page=
+- =semantic=
+- =reference=
+
+*** CLASS
+
+WOLOG-native shelf bands:
+
+- =000= constitutional / glossary / authority / repo control
+- =100= logic / ontology / type law
+- =200= clocks / replay / timing / execution law
+- =300= graph / relation / classification / indexing
+- =400= language / tags / notation / semantic description
+- =500= mathematics / duodecimal / combinatorics / Omicron math
+- =600= binary / transport / workers / protocols
+- =700= rendering / scene / svg / canvas / browser projection
+- =800= composition / authoring / editing / interaction
+- =900= history / references / legacy / external context
+
+*** TAGS
+
+Preferred tags to reuse:
+
+- =authority=
+- =ontology=
+- =type-system=
+- =runtime=
+- =eval=
+- =scene=
+- =frame=
+- =viewport=
+- =composer=
+- =binary=
+- =replay=
+- =trace=
+- =xor=
+- =polyform=
+- =omicron=
+- =pg=
+- =viewer=
+- =component=
+- =page=
+- =semantic-web=
+- =rdf=
+- =turtle=
+- =shacl=
+- =bcp47=
+- =type-contract=
+- =duodecimal=
+- =legacy=
+
+* Concept Authorities
+
+** Record: Polyform
+:PROPERTIES:
+:ID:       wolog:concept:polyform
+:TYPE:     document
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    100
+:MAIN:     structural arrangement of lawful cells
+:ADDED:    program object, packet, witness, visual code
+:TAGS:     polyform runtime replay authority
+:END:
+
+A polyform is a finite lawful arrangement of identical cells over a field.
+Within WOLOG it should be treated as a structural object first, then as a
+carrier for execution, witness, and projection.
+
+** Record: Polynomial
+:PROPERTIES:
+:ID:       wolog:concept:polynomial
+:TYPE:     document
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    100
+:MAIN:     symbolic law over values, coordinates, or forms
+:ADDED:    predicate source, program law
+:TAGS:     authority ontology
+:END:
+
+Use as lawful symbolic expression, not as a vague synonym for any structure.
+
+** Record: Predicate
+:PROPERTIES:
+:ID:       wolog:concept:predicate
+:TYPE:     document
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    100
+:MAIN:     recognizer or constraint over forms, laws, or values
+:ADDED:    validation, SHACL boundary, program branch
+:TAGS:     authority shacl semantic-web
+:END:
+
+Predicates classify or validate. They are not identical to programs, but they
+can be executed by programs.
+
+** Record: Program
+:PROPERTIES:
+:ID:       wolog:concept:program
+:TYPE:     document
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    200
+:MAIN:     executable replay over forms, laws, and predicates
+:ADDED:    runtime, transform sequence, logs
+:TAGS:     runtime replay authority
+:END:
+
+Program is the operational layer that replays lawful transforms.
+
+** Record: WOLOG Language
+:PROPERTIES:
+:ID:       wolog:concept:wolog-language
+:TYPE:     document
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    400
+:MAIN:     direct surface language with CPS core lowering
+:ADDED:    polyform authoring, continuation semantics, replay specification
+:TAGS:     authority polyform replay type-system
+:END:
+
+The WOLOG language is direct-style at the surface and continuation-passing in
+the core. Replay remains the authoritative semantic record.
+
+** Record: Virtual Codepoint
+:PROPERTIES:
+:ID:       wolog:concept:virtual-codepoint
+:TYPE:     document
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    400
+:MAIN:     dual-address identity for basis-cell algebra
+:ADDED:    barcode carriers, symbolic aliases, codepoint packing
+:TAGS:     authority polyform binary type-system
+:END:
+
+A virtual codepoint is the canonical identity boundary for the Aztec slide
+rule library. It has both a packed binary view and a symbolic alias.
+
+* Catalog Geometry
+
+This section defines how geometric or encoded address spaces relate to
+cataloging. The main rule is:
+
+- authority is canonical
+- mapping is federated
+- projection is downstream
+
+Do not let a display or transport encoding become the source of truth.
+
+** Three Semantic Spaces
+
+*** Local Space
+
+Purpose:
+- local aliases
+- local glyphs
+- local dialects
+- local community vocabularies
+- private or node-specific agreement
+
+Examples:
+- local PUA assignments
+- community shorthand
+- temporary experimental names
+
+Status:
+- useful
+- non-canonical
+- may differ across nodes
+
+*** Federated Space
+
+Purpose:
+- shared mappings between local systems
+- advisory equivalence
+- translation and alignment tables
+- inter-node agreement
+
+Examples:
+- word-to-synset mappings
+- federation-specific correspondence tables
+- negotiated naming bridges
+
+Status:
+- shared
+- advisory unless promoted
+- stable enough for exchange, but not final truth
+
+*** Canonical Space
+
+Purpose:
+- authority-controlled identity
+- stable concept records
+- semantic contracts
+- SHACL/Core validation boundaries
+- repo-level and network-level durable meaning
+
+Examples:
+- =urn:wolog:synset:100001=
+- =urn:wolog:module:scene=
+- =urn:wolog:artifact:frame:abc123=
+
+Status:
+- canonical
+- encoding-agnostic
+- durable
+
+** Authority, Mapping, Projection
+
+*** Authority Record
+
+An authority record defines the canonical identity of a thing.
+
+Examples:
+- concept
+- file/module
+- graph node
+- language tag contract
+- frame artifact
+
+Fields usually include:
+- canonical ID
+- canonical name
+- aliases
+- type
+- status
+- relations
+
+*** Mapping Record
+
+A mapping record relates one local or federated identity to another.
+
+Examples:
+- local term -> canonical synset
+- old module name -> current canonical module name
+- community glyph -> canonical concept
+
+Mapping records are not the same thing as authority records.
+
+*** Projection Record
+
+A projection record describes how a canonical or federated object appears on a
+particular surface.
+
+Examples:
+- Turtle serialization
+- SHACL shape
+- PG node/edge rendering
+- SVG projection
+- UTF-8/UTF-16 encoding
+- PUA or surrogate-pair display surface
+
+Projection is always downstream of authority.
+
+** Unicode Projection Rules
+
+Unicode may be used as:
+- a text surface
+- a framing surface
+- a local glyph space
+- an optional transport/view encoding
+
+Unicode should not be used as:
+- the sole canonical semantic identifier layer
+- the primary authority record layer
+
+*** Private Use Areas
+
+PUA and supplementary private use planes are acceptable as:
+- local language picking space
+- node-local glyph registry
+- community-specific symbol overlays
+
+They are not by themselves canonical semantic truth.
+
+*** Surrogate Pairs
+
+Surrogate-pair thinking is useful as a projection model for:
+- channel
+- wave
+- event
+- variation
+
+But surrogate pairs should not be treated as the canonical semantic atoms.
+
+Reason:
+- surrogates are UTF-16 machinery
+- they are encoding-dependent
+- they are awkward as durable RDF/URI/catalog identifiers
+
+Use them as projection or transport only.
+
+** Recommended Identifier Order
+
+Use this order of precedence:
+
+#+begin_example
+canonical semantic ID
+-> authority record
+-> federated mapping
+-> local alias/glyph
+-> Unicode / UI / transport projection
+#+end_example
+
+Examples:
+
+- canonical :: =urn:wolog:synset:100001=
+- federated :: =urn:wolog:federation:alpha:mapping:wisdom=
+- local :: =U+E123=
+- projection :: UTF-16 pair or visible glyph form
+
+** Catalog Use of Channel / Wave / Event Thinking
+
+The channel/wave/event model is still valuable for cataloging, but as structured
+classification metadata rather than canonical identity.
+
+Useful roles:
+- channel :: broad class or carrier axis
+- wave :: operational or semantic band
+- event :: specific action/transition kind
+- variation :: local refinement
+
+This can be represented as fields on records, bitfields in binary carriers, or
+classification tags in the catalog.
+
+** Observer Rule
+
+The observer/interpreter remains outside the encoded object.
+
+Meaning is reconstructed by:
+- authority records
+- mapping records
+- projection rules
+- interpreter context
+
+This is important:
+- the observer is not stored inside the encoding as the final truth
+- the observer verifies, aligns, and interprets
+
+** Catalog Design Rule
+
+For WOLOG:
+
+- geometry can inform classification
+- transport can inform framing
+- Unicode can inform projection
+- but authority must remain upstream
+
+Short form:
+
+#+begin_example
+authority -> mapping -> projection
+not
+projection -> authority
+#+end_example
+
+* Repo Map
+
+** Core Documents
+
+- [[file:README.md][README.md]] :: short project overview
+- [[file:CONSTITUTIONAL-SPEC.md][CONSTITUTIONAL-SPEC.md]] :: frozen substrate law
+- [[file:ARCHITECTURE.md][ARCHITECTURE.md]] :: stack, vocabulary, semantic overlay pipeline
+- [[file:OMICRON-MATH-MODEL.md][OMICRON-MATH-MODEL.md]] :: Omicron timing/math notes
+- [[file:AGENTS.md][AGENTS.md]] :: local working instructions
+
+** TypeScript Runtime
+
+- [[file:src/index.ts][src/index.ts]] :: public API barrel
+- [[file:src/types.ts][src/types.ts]] :: core typed model
+- [[file:src/runtime.ts][src/runtime.ts]] :: runtime stepping and initialization
+- [[file:src/eval.ts][src/eval.ts]] :: opcode evaluation
+- [[file:src/scene.ts][src/scene.ts]] :: deterministic event -> scene reduction
+- [[file:src/render-svg.ts][src/render-svg.ts]] :: SVG projection
+- [[file:src/render-canvas.ts][src/render-canvas.ts]] :: canvas projection
+- [[file:src/world-builder.ts][src/world-builder.ts]] :: world/frame construction
+- [[file:src/frame.ts][src/frame.ts]] :: frozen frame artifacts
+- [[file:src/viewport.ts][src/viewport.ts]] :: local view state
+- [[file:src/composer.ts][src/composer.ts]] :: overlay/composition layer
+- [[file:src/worker-protocol.ts][src/worker-protocol.ts]] :: worker message boundary
+
+** Binary / Replay / Embedding
+
+- [[file:src/binary.ts][src/binary.ts]] :: BitView, DataStream, Aztec bitwise embedding replay, XOR open/close, trace formatting, SHACL snippets
+
+Current constitutional rule in code:
+- no polyform length field
+- HALT-terminated replay stream
+- bitwise ops only for embedding replay: SHL, SHR, ROL, ROR, FLIP, XOR, HALT
+
+** Semantic Web Integration
+
+- [[file:src/semantic-web.ts][src/semantic-web.ts]] :: BCP 47 parsing/normalization, matching helpers, Turtle serialization, SHACL helpers
+
+Current scope:
+- well-formed BCP 47 parsing
+- basic filtering and lookup
+- language-tagged Turtle literals
+- semantic serialization for Aztec embeddings
+
+Deferred scope:
+- full IANA Language Subtag Registry ingestion
+- registry-backed canonicalization
+- richer RDF vocabulary for tags/subtags/extensions
+
+** Components
+
+- [[file:src/components/clock-node.js][src/components/clock-node.js]] :: reusable clock component
+- [[file:src/components/protocol-layer.js][src/components/protocol-layer.js]] :: protocol/UI support layer
+
+** Pages and Shells
+
+- [[file:index.html][index.html]] :: landing page
+- [[file:viewer.html][viewer.html]] :: viewer shell
+- [[file:scene.html][scene.html]] :: scene inspector shell
+- [[file:compose.html][compose.html]] :: composition shell
+- [[file:src/pages/main.ts][src/pages/main.ts]] :: generic page bootstrap
+- [[file:src/pages/clock-demo.ts][src/pages/clock-demo.ts]] :: clock demo bootstrap
+
+Rule:
+- pages orchestrate
+- components render/use runtime
+- runtime remains upstream of pages
+
+** Property Graph Surface
+
+- [[file:pg/person.pg][pg/person.pg]]
+- [[file:pg/knows.pg][pg/knows.pg]]
+- [[file:pg/small3.pg][pg/small3.pg]]
+- [[file:pg/wlog-terms.pg][pg/wlog-terms.pg]]
+
+These are downstream graph surfaces, not constitutional truth.
+
+** Other Implementation Threads
+
+- [[file:c/wolog.c][c/wolog.c]] :: C Omicron ISA runtime
+- [[file:c/swar.h][c/swar.h]] :: SWAR helpers
+- [[file:hs/WOLOG/Polyomino.hs][hs/WOLOG/Polyomino.hs]] :: Haskell polyomino / Omicron model
+- [[file:src/domino-visualizer.ts][src/domino-visualizer.ts]] :: browser polyomino/domino visualizer
+
+* Catalog Records
+
+** Record: Repo Index
+:PROPERTIES:
+:ID:       wolog:document:index
+:TYPE:     document
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    000
+:MAIN:     repo navigation and controlled catalog
+:ADDED:    authority control, planning, file discovery
+:TAGS:     authority index catalog
+:FILE:     index.org
+:END:
+
+Primary organizing spine for the repo. This is where we stabilize names,
+statuses, and per-file intent.
+
+** Record: Constitutional Spec
+:PROPERTIES:
+:ID:       wolog:document:constitutional-spec
+:TYPE:     document
+:STATUS:   stable
+:LAYER:    constitutional
+:CLASS:    000
+:MAIN:     frozen substrate law
+:ADDED:    replay law, projection boundary, invariants
+:TAGS:     authority ontology constitutional
+:FILE:     CONSTITUTIONAL-SPEC.md
+:END:
+
+Defines the constitutional substrate and the upstream/downstream law for the
+rest of the codebase.
+
+** Record: Architecture
+:PROPERTIES:
+:ID:       wolog:document:architecture
+:TYPE:     document
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    000
+:MAIN:     stack, vocabulary, overlay pipeline
+:ADDED:    semantic web, PG, projection surfaces
+:TAGS:     authority ontology pg semantic-web
+:FILE:     ARCHITECTURE.md
+:END:
+
+This is the broad architectural map. It should stay aligned with the runtime
+and semantic layers, not drift into wishful structure.
+
+** Record: Public API Barrel
+:PROPERTIES:
+:ID:       wolog:module:index
+:TYPE:     module
+:STATUS:   active
+:LAYER:    type
+:CLASS:    100
+:MAIN:     public export boundary for TypeScript runtime
+:ADDED:    integration surface for pages and external callers
+:TAGS:     type-system runtime semantic-web binary
+:FILE:     src/index.ts
+:END:
+
+Central export surface. If a subsystem is intended to be used across pages or
+tools, it should usually pass through here.
+
+** Record: Polyform Computation Spec
+:PROPERTIES:
+:ID:       wolog:document:polyform-computation
+:TYPE:     document
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    100
+:MAIN:     formal statement of polyform computation
+:ADDED:    shape-as-data, transform law, replay truth
+:TAGS:     polyform runtime replay
+:FILE:     POLYFORM-COMPUTATION.md
+:END:
+
+Working formalization of the polyform direction for the repo.
+
+** Record: WOLOG Language Spec
+:PROPERTIES:
+:ID:       wolog:document:wolog-language
+:TYPE:     document
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    400
+:MAIN:     language architecture, surface syntax, CPS core, replay law
+:ADDED:    decorators, continuations, worked examples
+:TAGS:     polyform replay authority type-system
+:FILE:     WOLOG-LANGUAGE.md
+:END:
+
+Constitutional language definition for surface forms, CPS lowering, and
+replay-first execution law.
+
+** Record: Aztec Slide Rule Library Spec
+:PROPERTIES:
+:ID:       wolog:document:aztec-slide-rule
+:TYPE:     document
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    400
+:MAIN:     virtual codepoint basis algebra, instruments, and barcode trinity
+:ADDED:    svg projection, bee tag, polygonal carrier, aztec carrier, maxi code carrier
+:TAGS:     authority polyform binary semantic-web type-system
+:FILE:     AZTEC-SLIDE-RULE-LIBRARY.md
+:END:
+
+Spec-first library definition for the virtual codepoint space, basis-cell
+algebra, functional tag pointers, instrument builders, and barcode trinity:
+- Aztec = Serializable Sprite (identity/persistence)
+- MaxiCode = Scene Projection (tilemap, voxel, hexel, pixel)
+- BEEtag = Message (physical print/scan or wire transport)
+
+** Record: Polyform Core
+:PROPERTIES:
+:ID:       wolog:module:polyform
+:TYPE:     module
+:STATUS:   active
+:LAYER:    runtime
+:CLASS:    100
+:MAIN:     core polyform types, transforms, witnesses, replay
+:ADDED:    bitboard carrier, connectivity checks
+:TAGS:     polyform runtime replay trace
+:FILE:     src/polyform.ts
+:END:
+
+Starter implementation of the polyform substrate. Keep this small and
+constitutional until the transform algebra is frozen.
+
+** Record: WOLOG Language Module
+:PROPERTIES:
+:ID:       wolog:module:language
+:TYPE:     module
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    400
+:MAIN:     reserved public interfaces for the WOLOG language
+:ADDED:    surface forms, decorators, continuations, core IR
+:TAGS:     polyform replay authority type-system
+:FILE:     src/language.ts
+:END:
+
+Constitutional type layer for the WOLOG language. Keeps surface/core contracts
+stable without committing to a parser or full executor yet.
+
+** Record: Aztec Slide Rule Module
+:PROPERTIES:
+:ID:       wolog:module:aztec-slide-rule
+:TYPE:     module
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    400
+:MAIN:     virtual codepoint basis algebra and carrier/instrument API
+:ADDED:    svg builders, codepoint packing, barcode trinity (Aztec/MaxiCode/BEEtag)
+:TAGS:     authority polyform binary type-system
+:FILE:     src/aztec-slide-rule.ts
+:END:
+
+Constitutional TS layer for the Aztec slide rule library. It freezes the
+public type surface for codepoints, basis cells, instruments, and carriers:
+- AztecCarrier = Serializable Sprite
+- MaxiCodeCarrier = Scene Projection (tilemap, voxel, hexel, pixel)
+- BeeTagCarrier = Message (physical/computational transport)
+
+** Record: Aztec Slide Rule Viewer
+:PROPERTIES:
+:ID:       wolog:component:aztec-slide-rule-viewer
+:TYPE:     component
+:STATUS:   active
+:LAYER:    projection
+:CLASS:    700
+:MAIN:     browser inspector for codepoints, instruments, and carriers
+:ADDED:    svg demo, basis-cell readout, barcode trinity (CLASS/INTERFACE/MESSAGE)
+:TAGS:     viewer component polyform binary
+:FILE:     src/components/aztec-slide-rule-viewer.ts
+:END:
+
+Reusable browser component for inspecting the Aztec slide rule library.
+Shows basis-cell SVG, instrument surfaces, and the barcode trinity projection.
+
+** Record: Core Types
+:PROPERTIES:
+:ID:       wolog:module:types
+:TYPE:     module
+:STATUS:   stable
+:LAYER:    type
+:CLASS:    100
+:MAIN:     canonical typed model
+:ADDED:    runtime config, events, program structure
+:TAGS:     type-system runtime authority
+:FILE:     src/types.ts
+:END:
+
+Holds the core TS algebra for config, runtime, program, and events.
+
+** Record: Runtime
+:PROPERTIES:
+:ID:       wolog:module:runtime
+:TYPE:     runtime
+:STATUS:   active
+:LAYER:    runtime
+:CLASS:    200
+:MAIN:     stepping and runtime initialization
+:ADDED:    page bootstrap, event generation
+:TAGS:     runtime replay omicron
+:FILE:     src/runtime.ts
+:END:
+
+Single-step and eager/lazy runtime execution live here.
+
+** Record: Evaluator
+:PROPERTIES:
+:ID:       wolog:module:eval
+:TYPE:     module
+:STATUS:   active
+:LAYER:    runtime
+:CLASS:    200
+:MAIN:     opcode execution and expression evaluation
+:ADDED:    runtime event semantics
+:TAGS:     runtime eval
+:FILE:     src/eval.ts
+:END:
+
+Implements evaluation semantics beneath runtime stepping.
+
+** Record: Scene Reduction
+:PROPERTIES:
+:ID:       wolog:module:scene
+:TYPE:     module
+:STATUS:   active
+:LAYER:    projection
+:CLASS:    700
+:MAIN:     deterministic event to scene reduction
+:ADDED:    page rendering, frame derivation, viewer work
+:TAGS:     scene runtime viewer
+:FILE:     src/scene.ts
+:END:
+
+This is the bridge from runtime events into inspectable projected state.
+
+** Record: SVG Renderer
+:PROPERTIES:
+:ID:       wolog:module:render-svg
+:TYPE:     module
+:STATUS:   active
+:LAYER:    projection
+:CLASS:    700
+:MAIN:     SVG projection from scene state
+:ADDED:    scene shell rendering, browser projection
+:TAGS:     scene viewer page
+:FILE:     src/render-svg.ts
+:END:
+
+Pure projection surface for scene state, with a browser helper for shell use.
+
+** Record: Canvas Renderer
+:PROPERTIES:
+:ID:       wolog:module:render-canvas
+:TYPE:     module
+:STATUS:   active
+:LAYER:    projection
+:CLASS:    700
+:MAIN:     canvas projection from scene state
+:ADDED:    alternate browser rendering surface
+:TAGS:     scene viewer page
+:FILE:     src/render-canvas.ts
+:END:
+
+Secondary rendering surface parallel to SVG.
+
+** Record: Binary Layer
+:PROPERTIES:
+:ID:       wolog:module:binary
+:TYPE:     module
+:STATUS:   active
+:LAYER:    replay
+:CLASS:    600
+:MAIN:     binary helpers and Aztec replay embeddings
+:ADDED:    xor open-close, traces, shacl snippets
+:TAGS:     binary replay trace xor polyform shacl
+:FILE:     src/binary.ts
+:END:
+
+Current bitwise replay carrier. This is where HALT-terminated embedding logic
+and binary framing helpers live.
+
+** Record: Semantic Web Layer
+:PROPERTIES:
+:ID:       wolog:module:semantic-web
+:TYPE:     module
+:STATUS:   in-motion
+:LAYER:    semantic
+:CLASS:    400
+:MAIN:     BCP 47, Turtle, RDF, SHACL integration
+:ADDED:    carrier serialization (Aztec/MaxiCode/BEEtag -> Turtle)
+:TAGS:     semantic-web rdf turtle shacl bcp47 type-contract carrier
+:FILE:     src/semantic-web.ts
+:END:
+
+Semantic integration surface. Active and useful now, but still pre-registry and
+not yet the final vocabulary layer.
+
+Features:
+- BCP 47 language tag parsing/normalization
+- Turtle triple serialization helpers
+- SHACL shape definitions
+- Aztec embedding serialization
+- Carrier serialization (Aztec/MaxiCode/BEEtag -> Turtle)
+
+BCP 47 note:
+- treat language tags as a pure structural contract first
+- distinguish well-formed structural conformance from later registry-backed validity
+
+Carrier URI scheme:
+- =urn:wolog:carrier:aztec:{witness}= -> Aztec Carrier (serializable sprite)
+- =urn:wolog:carrier:maxi:{alias}:mode{N}= -> MaxiCode Carrier (scene projection)
+- =urn:wolog:carrier:bee:{id15}= -> BEEtag Carrier (transport message)
+
+** Record: OWL Ontology
+:PROPERTIES:
+:ID:       wolog:module:ontology
+:TYPE:     module
+:STATUS:   active
+:LAYER:    semantic
+:CLASS:    400
+:MAIN:     OWL class hierarchy and properties for WOLOG domain
+:ADDED:    carrier classes, class hierarchy, cardinality constraints
+:TAGS:     semantic-web owl rdf ontology class-hierarchy
+:FILE:     src/ontology.ts
+:END:
+
+Declarative OWL class hierarchy for the WOLOG domain.
+
+Classes:
+- Structural: Polyform, BasisFamily, DegreeClass, RankClass, GroupClass, NormalizedForm
+- Carriers: Carrier, AztecCarrier, MaxiCodeCarrier, BeeTagCarrier
+- Instruments: Instrument, SmithChart, GenailleRods, BinaryGuessSurface
+- Witness/Replay: Witness, ReplayLog, ReplayEntry
+- Artifacts: Artifact, TopologyDescriptor, CombinatorialDescriptor
+- Codepoint: VirtualCodepoint, CodepointFamily
+
+Properties:
+- Structural: hasBasisFamily, hasDegreeClass, hasRankClass, hasGroupClass
+- Projection: projectsTo, hasProjection, hasInstrument, carrierRole
+- Carrier roles: serializableSprite, sceneProjection, transportMessage
+- Replay: hasWitness, hasReplayLog, tick, opcode, halted
+
+** Record: SPARQL Query Builder
+:PROPERTIES:
+:ID:       wolog:module:sparql
+:TYPE:     module
+:STATUS:   active
+:LAYER:    semantic
+:CLASS:    400
+:MAIN:     SPARQL query builder and carrier/polyform query helpers
+:ADDED:    SELECT/CONSTRUCT builders, pre-defined queries
+:TAGS:     sparql semantic-web rdf query
+:FILE:     src/sparql.ts
+:END:
+
+Lightweight SPARQL helpers for polyforms, carriers, and traces.
+
+Features:
+- SELECT/CONSTRUCT query builders
+- Pre-defined carrier queries (Aztec/MaxiCode/BEEtag)
+- Pre-defined polyform queries (by family, replay)
+- Virtual codepoint queries (by alias, family, group)
+- =WOLOG_SPARQL_PREFIXES= for standard namespace prefixes
+
+Ready for full RDF resources integration.
+
+** Record: RDF Resources
+:PROPERTIES:
+:ID:       wolog:module:resources
+:TYPE:     module
+:STATUS:   active
+:LAYER:    semantic
+:CLASS:    400
+:MAIN:     RDF resources - real-world entities identified by URIs
+:ADDED:    resource types, URI generation, carrier integration
+:TAGS:     semantic-web rdf resource uri ontology
+:FILE:     src/resources.ts
+:END:
+
+Real-world entities identified by URIs and described via carriers.
+
+Resource Types:
+- PhysicalObject :: Physical objects with Aztec identity + MaxiCode scene + BEEtag transport
+- DigitalArtifact :: Digital entities with BEEtag payload
+- Scene :: Composed scenes with MaxiCode projection
+- TransformEvent :: Transform operations with provenance
+- WitnessReceipt :: Cryptographic witness verification
+- SceneProjection :: Tilemap/voxel/hexel/pixel projections
+
+URI Scheme:
+- =urn:wolog:resource:physicalobject/{id}=
+- =urn:wolog:resource:digitalartifact/{id}=
+- =urn:wolog:resource:scene/{id}=
+- =urn:wolog:resource:transformevent/{id}=
+- =urn:wolog:resource:witnessreceipt/{id}=
+- =urn:wolog:resource:sceneprojection/{id}=
+
+Resource Creation:
+- createPhysicalObject(barcode, scenes, messages)
+- createDigitalArtifact(payload, associated)
+- createScene(members, projection)
+- createTransformEvent(subject, type)
+- createWitnessReceipt(witness, polyform)
+- createSceneProjection(source, carrier, type)
+
+** Record: World Builder
+:PROPERTIES:
+:ID:       wolog:module:world-builder
+:TYPE:     module
+:STATUS:   in-motion
+:LAYER:    frame
+:CLASS:    700
+:MAIN:     world and frame construction
+:ADDED:    capture, refresh, diff
+:TAGS:     frame scene runtime
+:FILE:     src/world-builder.ts
+:END:
+
+Important for frozen artifacts and future frame workflows.
+
+** Record: SKOS Knowledge Organization
+:PROPERTIES:
+:ID:       wolog:module:skos
+:TYPE:     module
+:STATUS:   active
+:LAYER:    semantic
+:CLASS:    400
+:MAIN:     SKOS concepts aligned with Unicode addressing and duodecimal classification
+:ADDED:    concept schemes, duodecimal (base-12) digits, Unicode address mapping
+:TAGS:     semantic-web skos knowledge-organization unicode duodecimal
+:FILE:     src/skos.ts
+:END:
+
+Simple Knowledge Organization System for WOLOG concepts.
+
+Features:
+- SKOS core: Concept, ConceptScheme, Collection
+- Duodecimal (base-12) classification aligned with Unicode
+- Pre-defined concept schemes for BasisFamily, CarrierRole, Instrument
+- Duodecimal digit concepts (0-Ɛ)
+- Unicode address <-> duodecimal notation mapping
+- Pre-defined SPARQL queries for SKOS resources
+
+Alignment:
+- Unicode addressing (codepoint, block, plane)
+- Duodecimal classification (base-12 digits, classifier)
+- SKOS concepts (notation, labels, relations)
+
+** Record: RIF Rule Layer
+:PROPERTIES:
+:ID:       wolog:module:rif
+:TYPE:     module
+:STATUS:   active
+:LAYER:    semantic
+:CLASS:    400
+:MAIN:     RIF rule interchange format for polyform inference
+:ADDED:    polyform inference rules, Turtle serialization, CHC support
+:TAGS:     semantic-web rif rules inference horn-clause
+:FILE:     src/rif.ts
+:END:
+
+Rule Interchange Format for polyform inference rules.
+
+Features:
+- RIF BLD/Core dialect support
+- Atomic and compound formulas (And, Or, Not, Implies, Equiv)
+- Constrained Horn Clause (CHC) support aligned with Barcode Trinity
+- Polyform inference rules (degree, family, carriers)
+- Turtle serialization of rules
+- Pre-defined polyform rules
+
+Constrained Horn Clause (CHC) alignment:
+
+   φ ∧ P₁(x₁) ∧ ... ∧ Pₙ(xₙ) → P(x)
+
+   φ (constraint) = Aztec (defines identity, "what it IS")
+   P (predicate)  = MaxiCode (defines projection, "how it APPEARS")
+   x (variable)   = BEEtag (defines message, "how it MOVES")
+
+CHC Rules:
+- wolog:chc:aztec-constrains-maxi
+- wolog:chc:bee-carries-identity
+- wolog:chc:maxi-is-projection
+- wolog:chc:full-trinity
+
+** Record: Logic and Proof Layer
+:PROPERTIES:
+:ID:       wolog:module:logic
+:TYPE:     module
+:STATUS:   active
+:LAYER:    semantic
+:CLASS:    400
+:MAIN:     Logic and proof inference engine for polyforms
+:ADDED:    formula evaluation, proof verification, query builder
+:TAGS:     semantic-web logic proof inference
+:FILE:     src/logic.ts
+:END:
+
+Logic and proof inference for polyforms.
+
+Features:
+- Formula evaluation (And, Or, Not, Implies)
+- Pattern matching and binding
+- Rule application and proof construction
+- Proof verification
+- Query builder (polyformQuery, carrierQuery, conceptQuery)
+- Pre-defined logic rules for polyforms
+
+Pre-defined Rules:
+- POLYFORM_LOGIC_RULES: derive family, degree, carriers
+- SEMANTIC_INFERENCE_RULES: SKOS semantic inference
+
+** Record: Polynomial Truth Table
+:PROPERTIES:
+:ID:       wolog:module:polynomial-truth-table
+:TYPE:     module
+:STATUS:   active
+:LAYER:    semantic
+:CLASS:    400
+:MAIN:     16 Boolean functions ↔ polyform basis types isomorphism
+:ADDED:    MaxiCode 15-bit identity, CHC alignment, closure functions
+:TAGS:     semantic-web polyform boolean truth-table horn-clause
+:FILE:     src/polynomial-truth-table.ts
+:END:
+
+Polynomial Truth Table: the isomorphism between Wittgenstein's 16 Boolean functions
+and polyomino basis types.
+
+Features:
+- 16 Boolean functions as truth tables
+- Polyform basis names (Monomino through Hexadecomino)
+- MaxiCode 15-bit identity encoding (truth function, arity, ordering, grouping, sequencing, closure)
+- CHC alignment: φ ∧ P₁(x₁) ∧ ... ∧ Pₙ(xₙ) → P(x)
+- Closure functions (Zero↔One, AND↔NAND, etc.)
+- Polyform → HornTerm conversion for RIF integration
+
+Boolean Function ↔ Polyform Basis Mapping:
+- Zero (0) ↔ Zero (0 cells)
+- NOT_p (3) ↔ Monomino (1 cell)
+- AND (8) ↔ Domino (2 cells)
+- OR (14) ↔ Tromino (3 cells)
+- XOR (6) ↔ Tetromino (4 cells)
+- NAND (7) ↔ Pentomino (5 cells)
+- NOR (1) ↔ Hexomino (6 cells)
+- Implication (11) ↔ Heptomino (7 cells)
+- XNOR (9) ↔ Octomino (8 cells)
+- NOT_q (5) ↔ Nonomino (9 cells)
+- NOT_p (3) ↔ Decomino (10 cells)
+- ConverseImp (13) ↔ Hendecomino (11 cells)
+- ConverseNonImp (2) ↔ Dodecomino (12 cells)
+- NonImplication (4) ↔ Tridecomino (13 cells)
+- q (10) ↔ Tetradecomino (14 cells)
+- p (12) ↔ Pentadecomino (15 cells)
+- One (15) ↔ Hexadecomino (16 cells)
+
+** Record: Omicron Optical-Rewriting Machine
+:PROPERTIES:
+:ID:       wolog:module:omicron-machine
+:TYPE:     module
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    500
+:MAIN:     kinematic computation system: geometry + logic + time
+:ADDED:    Aztec/MaxiCode/BEEtag trinity, 5040-tick cycle, FEFF/FFFE inversion
+:TAGS:     omicron polyform binary semantic-web rewriting
+:FILE:     src/omicron-machine.ts
+:END:
+
+The Omicron Optical-Rewriting Machine is a 5-tuple:
+
+    M = (A, M, B, Φ, R)
+
+Where:
+- A = Aztec bitboard (40-bit core with spiral layers, projective geometry)
+- M = MaxiCode tilemap (hexagonal grid, 6-neighbor connectivity)
+- B = BEEtag polynomial function (25-bit, 2-of-5 encoded)
+- Φ = Temporal phase (Tick ∈ [0, 5039], mod 5040)
+- R = Rewrite rule set (FEFF/FFFE toggled, 420-tick harmonic)
+
+Transition Function:
+    δ(A, M, B, Φ) = (A', M', B', Φ+1 mod 5040)
+
+Where:
+- A' = rotate(A, Φ mod 7)
+- M' = retile(M, A')
+- B' = centralInversion(B) if Φ mod 420 = 0 else B
+
+Three-Body System:
+| Layer   | Format              | Geometry                      | Function              |
+|---------|---------------------|-------------------------------|-----------------------|
+| Aztec   | Bitboard (40-bit)   | Square grid, spiral layers   | Static Structure      |
+| MaxiCode| Tilemap (hex)       | 6-neighbor bullseye          | Dynamic Interface     |
+| BEEtag  | Polynomial (25-bit) | 5×5 dot matrix               | Central Inversion     |
+
+Kinematic Constants:
+- MASTER_PERIOD = 5040 (7!)
+- SYNC_INTERVAL = 420 (12 harmonic sync points)
+- FANO_POINTS = 7 (projective plane)
+
+Bit-Meta-Circular Property:
+- The system describes its own encoding
+- Fixed point: μ(interpret)
+- Confluence at sync points (Church-Rosser)
+
+** Record: Canonical Control Plane
+:PROPERTIES:
+:ID:       wolog:module:control-plane
+:TYPE:     module
+:STATUS:   active
+:LAYER:    constitutional
+:CLASS:    600
+:MAIN:     1-bit control code principle: every symbol is structure or content
+:ADDED:    4-channel × 16-lane × 4-context matrix, EXTD recursion, COBS integration
+:TAGS:     binary control-plane semantic-web
+:FILE:     src/control-plane.ts
+:END:
+
+The Canonical Control Plane implements the 1-bit control code principle:
+
+    The escape IS the structure. There is no third category.
+
+Layer Architecture:
+- Layer 0: COBS framing (0x00 = packet delimiter)
+- Layer 1: FLAG bit (bit 7 = 0 data, bit 7 = 1 control)
+- Layer 2: Control word structure (channel, lane, context)
+- Layer 3: Context types (CT00, CT01, CT10, CT11)
+- Layer 4: Numerical systems (NUMSYS, 15 systems + EXTD)
+- Layer 5: Extension depth (EXTD recursion for infinite extensibility)
+
+Key Properties:
+- 4 structural channels (FS/GS/RS/US from ISO/IEC 6429)
+- 16 lanes per channel = 64 total addresses
+- 4 context types per address = 256 control words
+- 15 numerical systems + infinitely nestable EXTD
+- Fail-closed invariant: every ambiguity is rejection
+- Canonical: stream is its own mux table
+
+Hayes-to-Kernel Genealogy:
+| Era | Protocol | Mechanism | Reserved Values |
+|-----|----------|-----------|-----------------|
+| 1970s | Hayes Modem | +++ escape | fragile |
+| 1980s | Hayes DLE | 0x10 prefix | depth 1 |
+| 1988 | SLIP | ESC 0xDB | 2 |
+| 1990s | COBS | 0x00 | 1 |
+| 2026 | Atomic Kernel | FLAG + matrix | 0 |
+
+** Record: Frame Model
+:PROPERTIES:
+:ID:       wolog:module:frame
+:TYPE:     module
+:STATUS:   in-motion
+:LAYER:    frame
+:CLASS:    700
+:MAIN:     frozen frame artifact types and helpers
+:ADDED:    world capture and comparison
+:TAGS:     frame scene
+:FILE:     src/frame.ts
+:END:
+
+Defines the photograph side of the river/photon distinction.
+
+** Record: Viewport
+:PROPERTIES:
+:ID:       wolog:module:viewport
+:TYPE:     module
+:STATUS:   active
+:LAYER:    projection
+:CLASS:    700
+:MAIN:     local ephemeral view state
+:ADDED:    visible slice and interaction support
+:TAGS:     viewport viewer page
+:FILE:     src/viewport.ts
+:END:
+
+Explicitly local, ephemeral, and downstream of canonical state.
+
+** Record: Composer
+:PROPERTIES:
+:ID:       wolog:module:composer
+:TYPE:     module
+:STATUS:   in-motion
+:LAYER:    page
+:CLASS:    800
+:MAIN:     authoring overlay and composition layer
+:ADDED:    selection, patching, attrs, edit workflows
+:TAGS:     composer page viewer
+:FILE:     src/composer.ts
+:END:
+
+The start of the authoring surface proper.
+
+** Record: Worker Protocol
+:PROPERTIES:
+:ID:       wolog:module:worker-protocol
+:TYPE:     module
+:STATUS:   active
+:LAYER:    replay
+:CLASS:    600
+:MAIN:     worker message boundary
+:ADDED:    world patching and frame requests
+:TAGS:     binary runtime replay
+:FILE:     src/worker-protocol.ts
+:END:
+
+Defines cross-thread transport contracts for main thread and worker.
+
+** Record: Scene Page Shell
+:PROPERTIES:
+:ID:       wolog:page:scene
+:TYPE:     page
+:STATUS:   in-motion
+:LAYER:    page
+:CLASS:    700
+:MAIN:     scene inspector shell
+:ADDED:    runtime visualization and frame comparison
+:TAGS:     scene viewer page
+:FILE:     scene.html
+:END:
+
+Thin shell intended to remain downstream of runtime modules.
+
+** Record: Aztec Slide Rule Page Shell
+:PROPERTIES:
+:ID:       wolog:page:aztec-slide-rule
+:TYPE:     page
+:STATUS:   active
+:LAYER:    page
+:CLASS:    700
+:MAIN:     page orchestrator for the Aztec slide rule viewer
+:ADDED:    library demo and codepoint workspace
+:TAGS:     viewer page polyform binary
+:FILE:     aztec-slide-rule.html
+:END:
+
+Thin shell page for the Aztec slide rule viewer component and browser-facing
+library inspection.
+
+** Record: Viewer Page Shell
+:PROPERTIES:
+:ID:       wolog:page:viewer
+:TYPE:     page
+:STATUS:   in-motion
+:LAYER:    page
+:CLASS:    700
+:MAIN:     viewer shell
+:ADDED:    PG inspection and browser surface
+:TAGS:     viewer pg page
+:FILE:     viewer.html
+:END:
+
+Should eventually become an orchestrator for reusable viewer components.
+
+** Record: Compose Page Shell
+:PROPERTIES:
+:ID:       wolog:page:compose
+:TYPE:     page
+:STATUS:   in-motion
+:LAYER:    page
+:CLASS:    800
+:MAIN:     authoring shell
+:ADDED:    composer workflows and overlays
+:TAGS:     composer page
+:FILE:     compose.html
+:END:
+
+Authoring-oriented browser surface; still needs component-level extraction.
+
+** Record: Clock Component
+:PROPERTIES:
+:ID:       wolog:component:clock-node
+:TYPE:     component
+:STATUS:   active
+:LAYER:    projection
+:CLASS:    700
+:MAIN:     reusable clock node component
+:ADDED:    page composition and future component stack
+:TAGS:     component omicron page
+:FILE:     src/components/clock-node.js
+:END:
+
+One of the clearest current examples of component-level browser structure.
+
+** Record: WOLOG Terms Graph
+:PROPERTIES:
+:ID:       wolog:graph:terms
+:TYPE:     graph
+:STATUS:   active
+:LAYER:    graph
+:CLASS:    300
+:MAIN:     WOLOG terms PG surface
+:ADDED:    viewer graph inspection and vocabulary projection
+:TAGS:     pg ontology authority
+:FILE:     pg/wlog-terms.pg
+:END:
+
+Downstream graph surface expressing the constitutional vocabulary.
+
+** Record: C Omicron Runtime
+:PROPERTIES:
+:ID:       wolog:runtime:c-omicron
+:TYPE:     runtime
+:STATUS:   experimental
+:LAYER:    replay
+:CLASS:    600
+:MAIN:     C Omicron ISA runtime
+:ADDED:    SWAR experiments and trace logging
+:TAGS:     omicron binary runtime legacy
+:FILE:     c/wolog.c
+:END:
+
+Important reference and implementation thread, but not the current browser-side
+source of truth.
+
+** Record: Haskell Polyomino Model
+:PROPERTIES:
+:ID:       wolog:reference:polyomino-hs
+:TYPE:     reference
+:STATUS:   experimental
+:LAYER:    reference
+:CLASS:    500
+:MAIN:     Haskell polyomino and Omicron model
+:ADDED:    proof-like combinatorial reference
+:TAGS:     polyform omicron duodecimal legacy
+:FILE:     hs/WOLOG/Polyomino.hs
+:END:
+
+Useful mathematical thread and historical substrate, but not the main active
+runtime path.
+
+* Current Structure
+
+** Stable
+
+- TypeScript runtime modules in =src/=
+- SVG/canvas scene rendering
+- binary embedding helpers
+- semantic-web helper layer
+- Vite build
+
+** In Motion
+
+- converting page shells into real Web Components
+- connecting PG files directly into viewer flows
+- binary envelopes beyond the current bitwise replay helpers
+- semantic web layer from helper library toward registry-backed system
+
+** Likely Next Real Components
+
+- =<wolog-scene-viewer>=
+- =<wolog-graph-viewer>=
+- =<wolog-composer>=
+- =<wolog-frame-viewer>=
+
+* Functional Notes
+
+** Verified Recently
+
+- TypeScript typecheck passes
+- Vite build passes
+- Aztec open/close replay smoke test passes
+- semantic-web smoke test passes
+
+** Important Boundaries
+
+- SHACL snippets currently define carrier/shape boundaries, not full semantic execution
+- BCP 47 support currently checks well-formedness, not full IANA-registry validity
+- pages are still thin shells and some legacy/demo code remains nearby
+
+* Organizing Backlog
+
+** Near Term
+
+- [X] turn this file into the canonical repo navigation index
+- [X] add per-module ownership/intent notes
+- [X] mark legacy vs active files explicitly
+- [ ] connect PG loading into the viewer path
+- [ ] define binary envelopes for frames and patches
+- [ ] promote one page fully into shell + bootstrap + Web Component
+
+** Semantic Web
+
+Core Abstractions:
+- [X] define OWL ontology for type hierarchy (BasisFamily, Carrier, Instrument) =src/ontology.ts=
+- [X] SKOS knowledge organization aligned with Unicode + duodecimal =src/skos.ts=
+- [X] RIF rule layer (rules for polyform inference) =src/rif.ts=
+- [X] Logic/Proof layer (inference engine) =src/logic.ts=
+- [X] Polynomial Truth Table (16 Boolean functions ↔ polyform basis) =src/polynomial-truth-table.ts=
+
+Adapters:
+- [X] Carrier -> Turtle serializer (Aztec/MaxiCode/BEEtag to RDF) =src/semantic-web.ts=
+- [X] SHACL shapes for carrier validation (Aztec/MaxiCode/BEEtag shapes) =CARRIER_SHACL_TURTLE=
+- [X] SPARQL query builder (SELECT/CONSTRUCT + pre-defined queries) =src/sparql.ts=
+- [X] RDF resources (real-world entities identified by URIs) =src/resources.ts=
+- [X] SKOS concept schemes (BasisFamily, CarrierRole, Instrument, Duodecimal) =src/skos.ts=
+- [ ] Polyform -> SPARQL queryable (query polyforms as graph)
+- [ ] add registry-backed BCP 47 validity
+
+=FULL KNOWLEDGE STACK COMPLETE=
+- [X] Unicode addressing -> Duodecimal classification -> SKOS concepts
+- [X] RIF rules (polyform inference)
+- [X] Logic/Proof (inference engine)
+- [X] Polynomial Truth Table (Boolean functions ↔ polyomino basis isomorphism)
+- [X] Omicron Optical-Rewriting Machine (kinematic computation) =src/omicron-machine.ts=
+
+Alignment Model:
+Unicode codepoint -> duodecimal notation -> SKOS concept notation -> RIF rules -> Logic inference -> Polynomial Truth Table -> Omicron Machine
+
+Example Flow:
+U+1D4D (ᵍ) -> ᘔ5 -> squares.concept -> degree-from-cells -> Polyform(?p) ^ wolog:hasCellCount(?p, 4) -> AND ↔ Domino -> Aztec/Maxi/BEE trinity -> 5040-tick kinematic cycle
+
+Truth Table ↔ Polyform Isomorphism:
+- 16 Boolean functions (Wittgenstein's truth table) = closed set under composition (Post's lattice)
+- Each polyomino (Monomino-Hexadecomino) maps to a Boolean function
+- MaxiCode 15-bit ID encodes: 4-bit truth function + 2-bit arity + 2-bit ordering + 2-bit grouping + 2-bit sequencing + 1-bit closure + 2-bit reserved
+
+Omicron Optical-Rewriting Machine:
+- M = (A, M, B, Φ, R) — 5-tuple formal definition
+- Aztec = Projective Geometry (Fano plane, 40-bit core)
+- MaxiCode = Hexagonal Tilemap (6-neighbor, symmetric/asymmetric)
+- BEEtag = Central Inversion (2-of-5, FEFF/FFFE toggle)
+- 5040-tick master cycle with 420-tick harmonics
+- Bit-meta-circular: system describes its own encoding
+
+Canonical Control Plane:
+- 1-bit control code principle: every symbol is structure or content
+- The escape IS the structure. There is no third category.
+- Layer 0: COBS framing (0x00 = packet delimiter)
+- Layer 1: FLAG bit (bit 7 = 0 data, bit 7 = 1 control)
+- Layer 2: Control word structure (channel, lane, context)
+- Layer 3: Context types (CT00, CT01, CT10, CT11)
+- Layer 4: Numerical systems (NUMSYS, 15 systems + EXTD)
+- Layer 5: Extension depth (EXTD recursion for infinite extensibility)
+- 4 channels × 16 lanes = 64 addresses × 4 contexts = 256 control words
+- Hayes-to-Kernel: Hayes → DLE → SLIP → COBS → Atomic Kernel
+
+URI Schemes:
+- =urn:wolog:resource:{kind}/{id}= -> RDF resources
+- =urn:wolog:carrier:aztec:{witness}= -> serializable sprite
+- =urn:wolog:carrier:maxi:{alias}:mode{N}= -> scene projection
+- =urn:wolog:carrier:bee:{id15}= -> transport message
+- =urn:wolog:skos:basis-family/concept/{notation}= -> BasisFamily concepts
+- =urn:wolog:skos:carrier-role/concept/{notation}= -> CarrierRole concepts
+- =urn:wolog:skos:duodecimal-class/concept/{digit}= -> Duodecimal digits
+
+Carrier URI scheme:
+- =urn:wolog:carrier:aztec:{witness}= -> serializable sprite
+- =urn:wolog:carrier:maxi:{alias}:mode{N}= -> scene projection
+- =urn:wolog:carrier:bee:{id15}= -> transport message
+
+** Runtime / UI
+
+- [ ] align page bootstraps around the same scene/world API
+- [ ] expose replay traces to viewer/scene surfaces
+- [ ] formalize frame capture and diff workflows
+- [ ] isolate legacy demos from current runtime modules
+
+* Questions To Keep Visible
+
+- What is constitutional core vs projection helper?
+- Which files are active source of truth vs legacy experiments?
+- Which browser pages should become components first?
+- What deserves a stable RDF/SHACL vocabulary now, and what is still too fluid?
+- Where should replay traces live so they are visible across binary, scene, and semantic layers?
+- How do we serialize the Barcode Trinity (Aztec/MaxiCode/BEEtag) as semantic triples?
+- Should MaxiCode's tilemap/voxel/hexel projections have their own URI schemes?
+
+* Update Protocol
+
+When we touch the repo, update this file in one or more of these ways:
+
+- add new modules to the repo map
+- add or revise catalog records
+- move files between stable / in motion / legacy status
+- record newly verified functionality
+- prune completed backlog items
+- add cross-links to the docs or files that became authoritative

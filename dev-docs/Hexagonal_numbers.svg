@@ -1,0 +1,92 @@
+
+<svg width="610" height="222" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="c" x1="24" x2="24" y1="103" y2="112" gradientUnits="userSpaceOnUse">
+<stop stop-color="#fff"/>
+<stop stop-color="#00d" offset="1"/>
+</linearGradient>
+
+<radialGradient id="a" cx="22" cy="118" r="9" gradientUnits="userSpaceOnUse">
+<stop stop-color="#aae"/>
+<stop stop-color="#00d" offset=".5"/>
+</radialGradient>
+
+<radialGradient id="b" cx="22" cy="118" r="9" gradientUnits="userSpaceOnUse">
+<stop stop-color="#ddd"/>
+<stop stop-color="#aaa" offset=".4"/>
+</radialGradient>
+
+<linearGradient id="g" x1="24" x2="24" y1="103" y2="112" gradientUnits="userSpaceOnUse">
+<stop stop-color="#fff"/>
+<stop stop-color="#aaa" offset="1"/>
+</linearGradient>
+
+<path id="d" d="m9 113a10 10 0 1 1 0 .1"/>
+<path id="e" d="m27 109a8 5 0 1 0 0 .1"/>
+
+<g id="bl">
+<use fill="url(#a)" xlink:href="#d"/>
+<use fill="url(#c)" xlink:href="#e"/>
+</g>
+
+<g id="gr">
+<use fill="url(#b)" xlink:href="#d"/>
+<use fill="url(#g)" xlink:href="#e"/>
+</g>
+
+<g id="h">
+<path d="m86 143h35l18-30-18-30h-35l-17 30z" stroke="#000"/>
+<use x="50" xlink:href="#gr"/>
+</g>
+<path d="m381 113 51-90h108l51 90-51 90h-108z" stroke="#000"/>
+
+<g id="l">
+<path d="m225 173h72l33-60-33-60h-72l-34 60z" stroke="#000"/>
+<use x="122" xlink:href="#h"/>
+
+<g id="n">
+<use x="224" y="-30" xlink:href="#gr"/>
+<use x="189" y="-30" xlink:href="#gr"/>
+</g>
+<use y="60" xlink:href="#n"/>
+<use x="242" xlink:href="#gr"/>
+</g>
+<use x="190" xlink:href="#l"/>
+<use x="501" xlink:href="#gr"/>
+<use x="485" y="-30" xlink:href="#gr"/>
+<use x="485" y="30" xlink:href="#gr"/>
+
+<g id="j">
+<use x="396" y="-60" xlink:href="#gr"/>
+<use x="468" y="-60" xlink:href="#gr"/>
+<use x="432" y="-60" xlink:href="#gr"/>
+</g>
+<use y="120" xlink:href="#j"/>
+<use x="120" xlink:href="#bl"/>
+
+<g id="i">
+<use x="102" y="-30" xlink:href="#bl"/>
+<use x="67" y="-30" xlink:href="#bl"/>
+</g>
+<use y="60" xlink:href="#i"/>
+<use y="120" xlink:href="#f"/>
+
+<g id="m">
+<use x="311" xlink:href="#bl"/>
+<use x="295" y="-30" xlink:href="#bl"/>
+<use x="295" y="30" xlink:href="#bl"/>
+</g>
+
+<g id="f">
+<use x="278" y="-60" xlink:href="#bl"/>
+<use x="139" y="-30" xlink:href="#i"/>
+</g>
+<use x="539" y="-60" xlink:href="#bl"/>
+<use x="261" xlink:href="#m"/>
+
+<g id="k">
+<use x="521" y="-90" xlink:href="#bl"/>
+<use x="207" y="-30" xlink:href="#f"/>
+</g>
+<use y="180" xlink:href="#k"/>
+<use x="539" y="60" xlink:href="#bl"/>
+</svg>

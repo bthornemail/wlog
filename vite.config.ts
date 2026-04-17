@@ -11,7 +11,8 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         viewer: resolve(__dirname, 'viewer.html'),
         scene: resolve(__dirname, 'scene.html'),
-        compose: resolve(__dirname, 'compose.html')
+        compose: resolve(__dirname, 'compose.html'),
+        quartetReconciliationDemo: resolve(__dirname, 'quartet-reconciliation-demo.html')
       }
     }
   },

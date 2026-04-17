@@ -67,16 +67,13 @@
   <script type='module'>
     // Import from src modules (will work with Vite)
     import { createRuntime, stepRuntime } from './src/runtime.ts';
-    import { createScene, reduceScene, Scene } from './src/scene.ts';
-    import { renderSvg } from './src/render-svg.ts';
-    import { createScene as createDomScene, renderDom } from './src/dom.ts';
-    import { createWorld, WorldConfig } from './src/world-builder.ts';
-    import { Frame, captureFrame, listFrames } from './src/frame.ts';
+    import { emptyScene, reduceEvent } from './src/scene.ts';
+    import { renderSceneSvg } from './src/render-svg.ts';
     
     // State
     var runtime = createRuntime();
-    var scene = createScene();
-    var world = createWorld({} as WorldConfig);
+    var scene = emptyScene();
+    var world = { revision: 0, chunks: new Map(), createdAt: Date.now() };
     var frames = [];
     var currentRenderer = 'svg';
     
@@ -88,20 +85,18 @@
       container.innerHTML = '';
       try {
         if (currentRenderer === 'svg') {
-          const svg = renderSvg(scene, container);
-          container.appendChild(svg);
-        } else if (currentRenderer === 'dom') {
-          renderDom(scene, container);
+          const svgStr = renderSceneSvg(scene, { cellSize: 32, padding: 12 });
+          container.innerHTML = svgStr;
         } else {
-          // Canvas fallback - render SVG to data URL
-          const svg = renderSvg(scene, container);
+          // Canvas fallback - render SVG to canvas via data URL
+          const svgStr = renderSceneSvg(scene, { cellSize: 32, padding: 12 });
           const canvas = document.createElement('canvas');
           canvas.width = container.clientWidth;
           canvas.height = container.clientHeight;
           const ctx = canvas.getContext('2d');
           const img = new Image();
           img.onload = () => ctx.drawImage(img, 0, 0);
-          img.src = 'data:image/svg+xml;base64,' + btoa(svg.outerHTML);
+          img.src = 'data:image/svg+xml;base64,' + btoa(svgStr);
           container.appendChild(canvas);
         }
       } catch (e) {
@@ -143,22 +138,25 @@
     
     // Step runtime
     function step() {
-      runtime = stepRuntime(runtime);
-      scene = reduceScene(scene, runtime.events || []);
+      const result = stepRuntime(runtime);
+      if (result) {
+        runtime = result[0];
+        const event = result[1];
+        scene = reduceEvent(scene, event);
+      }
       render();
     }
     
     // Reset
     function reset() {
       runtime = createRuntime();
-      scene = createScene();
+      scene = emptyScene();
       render();
     }
     
     // Capture frame
     function capture() {
-      const frame = captureFrame(scene, world);
-      frames.push(frame);
+      frames.push({ scene: JSON.parse(JSON.stringify(scene)), tick: Date.now() });
       updateInspectors();
     }
     

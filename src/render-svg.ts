@@ -71,3 +71,21 @@ export function renderSceneSvg(
 ${body}
 </svg>`;
 }
+
+export function renderSvg(scene: Scene, container?: HTMLElement): SVGSVGElement {
+  const svgMarkup = renderSceneSvg(scene);
+  if (typeof document === "undefined") {
+    throw new Error("renderSvg requires a browser document");
+  }
+  const template = document.createElement("template");
+  template.innerHTML = svgMarkup.trim();
+  const svg = template.content.firstElementChild;
+  if (!(svg instanceof SVGSVGElement)) {
+    throw new Error("renderSceneSvg did not produce an SVG root element");
+  }
+  if (container) {
+    container.innerHTML = "";
+    container.appendChild(svg);
+  }
+  return svg;
+}

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="-1795 -598 2400 1200">
+ <title>Pythagorean means nomograms</title>
+ <desc>Nomograms to graphically calculate arithmetic (1), geometric (2) and harmonic (3) means, ''z'' of two real numbers, ''x'' = 40 and ''y'' = 10 (red) and ''x'' = 45 and ''y'' = 5 (blue), by CMG Lee.</desc>
+ <style type="text/css">
+svg { font-family:'Liberation Sans',Helvetica,Arial,sans-serif; font-size:40px; letter-spacing:-4px; text-anchor:middle; fill:#000; stroke:none; stroke-width:2; stroke-linecap:round; }
+text { stroke:none; cursor:default; }
+.var { font-style:italic; }
+.num { font-size:80px; }
+.seg { stroke-width:4; stroke-opacity:0.8; }
+.m40 { fill:#f00; stroke:#f00; }
+.m45 { fill:#06f; stroke:#06f; }
+ </style>
+ <pattern id="pattern_grid" patternUnits="userSpaceOnUse" width="100" height="100">
+  <rect x="0" y="0" width="100" height="100" fill="none" stroke="#ccc"/>
+ </pattern>
+ <pattern id="pattern_axis_lin" patternUnits="userSpaceOnUse" width="100" height="20">
+  <path d="M 100,20 V 0 H 0 V 20 M 10,0 V 5 M 20,0 V 5 M 30,0 V 5 M 40,0 V 5 M 50,0 V 8 M 60,0 V 5 M 70,0 V 5 M 80,0 V 5 M 90,0 V 5" fill="none" stroke="#000"/>
+ </pattern>
+ <pattern id="pattern_axis_log" patternUnits="userSpaceOnUse" width="200" height="20">
+  <path d="M 200,20 V 0 H 0 V 20 M 60,0 V 5 M 95,0 V 5 M 120,0 V 5 M 140,0 V 8 M 156,0 V 5 M 169,0 V 5 M 181,0 V 5 M 191,0 V 5" fill="none" stroke="#000"/>
+ </pattern>
+ <circle cx="0" cy="0" r="99999" fill="#fff"/>
+ <g id="arithmetic" transform="translate(-1200,-300)">
+  <text transform="translate(-550,-250)" x="0" y="0.7ex" class="num">1</text>
+  <path d="M 400,-200 L 100,200" class="m40 seg"/>
+  <path d="M 450,-200 L  50,200" class="m45 seg"/>
+  <g id="axis_h_zero">
+   <use xlink:href="#axis_h"/>
+   <text x="0" y="2ex">0</text>
+  </g>
+  <use xlink:href="#axis_h_zero" transform="translate(0,-200)"/>
+  <use xlink:href="#axis_h_zero" transform="translate(0, 200)"/>
+  <text transform="translate( 580,-200)" x="0" y="2ex" class="var">x</text>
+  <text transform="translate( 580, 200)" x="0" y="2ex" class="var">y</text>
+  <text transform="translate( 580,   0)" x="0" y="2ex" class="var">z</text>
+  <text transform="translate( 250,   0)" x="0" y="2ex" class="m40">25</text>
+  <text transform="translate( 250,   0)" x="0" y="2ex" class="m45" opacity="0.5">25</text>
+ </g>
+ <g id="geometic" transform="translate(-1200,350)">
+  <text transform="translate(-550,-250)" x="0" y="0.7ex" class="num">2</text>
+  <path d="M 320,-200 L 200,200" class="m40 seg"/>
+  <path d="M 331,-200 L 140,200" class="m45 seg"/>
+  <g id="axis_log">
+   <rect x="-590" y="-10" width="1180" height="20" fill="url(#pattern_axis_log)"/>
+   <text transform="translate( -60,0)" x="0"      y="2ex">0.5</text>
+   <text transform="translate(-200,0)" x="0"      y="2ex">0.1</text>
+   <text transform="translate(-400,0)" x="0"      y="2ex">0.01</text>
+   <text transform="translate(   0,0)" x="0"      y="2ex">1</text>
+   <text transform="translate( 140,0)" x="0"      y="2ex">5</text>
+   <text transform="translate( 200,0)" x="-0.3ex" y="2ex">10</text>
+   <text transform="translate( 340,0)" x="0"      y="2ex">50</text>
+   <text transform="translate( 400,0)" x="0"      y="2ex">100</text>
+  </g>
+  <use xlink:href="#axis_log" transform="translate(0,-200)"/>
+  <use xlink:href="#axis_log" transform="translate(0, 200)"/>
+  <text transform="translate( 580,-200)" x="0" y="2ex" class="var">x</text>
+  <text transform="translate( 580, 200)" x="0" y="2ex" class="var">y</text>
+  <text transform="translate( 580,   0)" x="0" y="2ex" class="var">z</text>
+  <text transform="translate( 275,   0)" x="0" y="2ex" class="m40">20</text>
+  <text transform="translate( 215,   0)" x="0" y="-0.3ex" class="m45">15</text>
+ </g>
+ <g id="harmonic">
+  <text transform="translate(-550,-550)" x="0" y="0.7ex" class="num">3</text>
+  <rect x="-590" y="-590" width="1180" height="1180" fill="url(#pattern_grid)"/>
+  <text x="3ex" y="-0.2ex" fill="#999">45&#176;</text>
+  <path d="M 0,0 H 35 Q 37,-15 25,-25" fill="#ccc"/>
+  <path d="M 400,0 L 0,-100" class="m40 seg"/>
+  <path d="M 450,0 L 0, -50" class="m45 seg"/>
+  <text transform="translate(  80,-80)" x="-0.7ex" y="-0.5ex" class="m40">16</text>
+  <text transform="translate(  45,-45)" x="-0.6ex" y="-0.4ex" class="m45">9</text>
+  <text transform="translate(-100,100)" x="-1.8ex" y="-0.5ex">&#8722;20</text>
+  <text transform="translate(-200,200)" x="-1.8ex" y="-0.5ex">&#8722;40</text>
+  <text transform="translate(-300,300)" x="-1.8ex" y="-0.5ex">&#8722;60</text>
+  <text transform="translate(-400,400)" x="-1.8ex" y="-0.5ex">&#8722;80</text>
+  <text transform="translate(-500,500)" x="-2.2ex" y="-0.5ex">&#8722;100</text>
+  <text transform="translate(  0,   0)" x="-1ex"   y="-0.5ex">0</text>
+  <text transform="translate(100,-100)" x="-0.4ex" y="-1.2ex">20</text>
+  <text transform="translate(200,-200)" x="-1.4ex" y="-0.5ex">40</text>
+  <text transform="translate(300,-300)" x="-1.4ex" y="-0.5ex">60</text>
+  <text transform="translate(400,-400)" x="-1.4ex" y="-0.5ex">80</text>
+  <text transform="translate(500,-500)" x="-1.8ex" y="-0.5ex">100</text>
+  <text transform="translate(560,-560)" x="-1ex"   y="-0.5ex" class="var">z</text>
+  <text transform="translate(0, 100)" x="-2ex" y="0.7ex">&#8722;10</text>
+  <text transform="translate(0, 200)" x="-2ex" y="0.7ex">&#8722;20</text>
+  <text transform="translate(0, 300)" x="-2ex" y="0.7ex">&#8722;30</text>
+  <text transform="translate(0, 400)" x="-2ex" y="0.7ex">&#8722;40</text>
+  <text transform="translate(0, 500)" x="-2ex" y="0.7ex">&#8722;50</text>
+  <text transform="translate(0,-100)" x="-1.6ex" y="0.7ex">10</text>
+  <text transform="translate(0,-200)" x="-1.6ex" y="0.7ex">20</text>
+  <text transform="translate(0,-300)" x="-1.6ex" y="0.7ex">30</text>
+  <text transform="translate(0,-400)" x="-1.6ex" y="0.7ex">40</text>
+  <text transform="translate(0,-500)" x="-1.6ex" y="0.7ex">50</text>
+  <text transform="translate(0,-580)" x="-1.6ex" y="0.7ex" class="var">y</text>
+  <g id="axis_x">
+   <g id="axis_h">
+    <rect id="axis" x="-590" y="-10" width="1180" height="20" fill="url(#pattern_axis_lin)"/>
+    <text transform="translate(-100,0)" x="0"      y="2ex">&#8722;10</text>
+    <text transform="translate(-200,0)" x="0"      y="2ex">&#8722;20</text>
+    <text transform="translate(-300,0)" x="0"      y="2ex">&#8722;30</text>
+    <text transform="translate(-400,0)" x="0"      y="2ex">&#8722;40</text>
+    <text transform="translate(-500,0)" x="0"      y="2ex">&#8722;50</text>
+    <text transform="translate( 100,0)" x="-0.2ex" y="2ex">10</text>
+    <text transform="translate( 200,0)" x="-0.4ex" y="2ex">20</text>
+    <text transform="translate( 300,0)" x="0"      y="2ex">30</text>
+    <text transform="translate( 400,0)" x="0"      y="2ex">40</text>
+    <text transform="translate( 500,0)" x="0"      y="2ex">50</text>
+   </g>
+   <text transform="translate( 580,0)" x="0" y="2ex" class="var">x</text>
+  </g>
+  <use xlink:href="#axis" transform="matrix(0,-1 -1,0 0,0)"/>
+  <rect x="-1180" y="-10" width="2360" height="20" fill="url(#pattern_axis_lin)" transform="matrix(0.5,-0.5 -0.8,-0.8 0,0)"/>
+ </g>
+</svg>

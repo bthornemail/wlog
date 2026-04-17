@@ -6,7 +6,7 @@
 // ============================================================
 
 import type { Runtime, WLOG, Event, Config } from "./types.js";
-import { ZERO_B8 } from "./types.js";
+import { ZERO_B8, slot, Done } from "./types.js";
 import { runOpcode } from "./eval.js";
 
 // ------------------------------------------------------------------
@@ -81,6 +81,22 @@ export function* runLazy(rt: Runtime): Generator<Event, void, unknown> {
     yield ev;
     current = next;
   }
+}
+
+// ------------------------------------------------------------------
+// Create minimal runtime (empty program)
+// ------------------------------------------------------------------
+
+export function createRuntime(): Runtime {
+  return {
+    header: {
+      marker: { orientation: "Identity" },
+      clock: { base: "Base60" },
+      seed: { slot: slot(0), mode: "XX", line: "L0", point: "P0", tile: "T0" },
+    },
+    config: seedConfig({ slot: slot(0), mode: "XX", line: "L0", point: "P0", tile: "T0" }),
+    program: Done(),
+  };
 }
 
 // ------------------------------------------------------------------

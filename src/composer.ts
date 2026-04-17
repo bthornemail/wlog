@@ -57,6 +57,11 @@ export function emptyComposerState(): ComposerState {
   };
 }
 
+// Alias for backward compatibility
+export function createComposer(): ComposerState {
+  return emptyComposerState();
+}
+
 export function toggleSelection(
   state: ComposerState,
   key: string,
@@ -345,3 +350,13 @@ export function isHovered(composer: ComposerState, key: string): boolean {
 export function getSelectedCount(state: ComposerState): number {
   return state.selected.size;
 }
+
+// Aliases for backward compatibility
+export const addOverlay = toggleSelection;
+export const removeOverlay = clearOverlay;
+export const applyPatch = applyPatchToSelection;
+export const serializeComposer = (state: ComposerState): string => JSON.stringify(state, (_, v) => {
+  if (v instanceof Set) return { __set: [...v] };
+  if (v instanceof Map) return { __map: [...v] };
+  return v;
+}, 2);

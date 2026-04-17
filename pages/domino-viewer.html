@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>WOLOG Domino/Polyomino Visualizer</title>
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --accent: #58a6ff;
+      --omicron: #f59e0b;
+      --aegean: #c084fc;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    
+    #header {
+      padding: 12px 20px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    #header h1 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--accent);
+    }
+    
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
+    
+    button, select {
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: #21262d;
+      color: var(--text);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+    }
+    
+    button:hover { background: var(--border); }
+    
+    #main {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 20px;
+      padding: 20px;
+      height: calc(100vh - 60px);
+    }
+    
+    #visualization {
+      background: var(--panel);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    #polyomino-grid {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    #state-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .panel {
+      background: var(--panel);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 15px;
+    }
+    
+    .panel-title {
+      font-size: 11px;
+      color: #8b949e;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 13px;
+    }
+    
+    .stat-label { color: #8b949e; }
+    .stat-value { color: var(--accent); }
+    
+    .omicron-event {
+      color: var(--omicron);
+      font-weight: bold;
+      animation: pulse 0.5s ease;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .aegean {
+      color: var(--aegean);
+      font-size: 24px;
+      text-align: center;
+      padding: 10px;
+    }
+    
+    .discretion-matrix {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+      text-align: center;
+    }
+    
+    .discretion-cell {
+      padding: 8px;
+      border-radius: 4px;
+      background: #21262d;
+      font-size: 11px;
+    }
+    
+    .discretion-cell.active {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    
+    .info {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      font-size: 11px;
+      color: #8b949e;
+    }
+  </style>
+  <link href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap' rel='stylesheet'>
+</head>
+<body>
+  <div id='header'>
+    <h1>◈ WOLOG Domino Visualizer</h1>
+    <div class='controls'>
+      <button id='gnomonBtn'>+ Gnomon (Grow)</button>
+      <button id='tickBtn'>Tick</button>
+      <button id='resetBtn'>Reset</button>
+      <select id='classSelect'>
+        <option value='free'>Free (no mirror)</option>
+        <option value='onesided'>One-Sided (no reflection)</option>
+        <option value='fixed'>Fixed (absolute)</option>
+      </select>
+    </div>
+  </div>
+  
+  <div id='main'>
+    <div id='visualization'>
+      <div id='polyomino-grid'></div>
+    </div>
+    
+    <div id='state-panel'>
+      <div class='panel'>
+        <div class='panel-title'>Clock State (Wallis)</div>
+        <div class='stat'>
+          <span class='stat-label'>Tick</span>
+          <span class='stat-value' id='tickVal'>0</span>
+        </div>
+        <div class='stat'>
+          <span class='stat-label'>Double Primes (‵‵)</span>
+          <span class='stat-value' id='dpVal'>0</span>
+        </div>
+        <div class='stat'>
+          <span class='stat-label'>Primes (‵)</span>
+          <span class='stat-value' id='pVal'>0</span>
+        </div>
+        <div class='stat'>
+          <span class='stat-label'>Units (°)</span>
+          <span class='stat-value' id='uVal'>0</span>
+        </div>
+        <div class='stat'>
+          <span class='stat-label'>Status</span>
+          <span class='stat-value' id='omicronVal'></span>
+        </div>
+      </div>
+      
+      <div class='panel'>
+        <div class='panel-title'>Aegean Witness (Polyomino Count)</div>
+        <div class='aegean' id='aegeanVal'>𐄇</div>
+        <div class='stat'>
+          <span class='stat-label'>Free shapes</span>
+          <span class='stat-value' id='freeCount'>1</span>
+        </div>
+        <div class='stat'>
+          <span class='stat-label'>One-Sided</span>
+          <span class='stat-value' id='oneSidedCount'>1</span>
+        </div>
+        <div class='stat'>
+          <span class='stat-label'>Fixed</span>
+          <span class='stat-value' id='fixedCount'>1</span>
+        </div>
+      </div>
+      
+      <div class='panel'>
+        <div class='panel-title'>2×5 Discretion Matrix</div>
+        <div class='discretion-matrix' id='discretionGrid'></div>
+      </div>
+      
+      <div class='panel'>
+        <div class='panel-title'>Fano / Sonar</div>
+        <div class='stat'>
+          <span class='stat-label'>τ₇ (Fano)</span>
+          <span class='stat-value' id='fanoVal'>0</span>
+        </div>
+        <div class='stat'>
+          <span class='stat-label'>τ₆₀ Channel</span>
+          <span class='stat-value' id='sonarChannel'>0</span>
+        </div>
+        <div class='stat'>
+          <span class='stat-label'>τ₆₀ Slot</span>
+          <span class='stat-value' id='sonarSlot'>0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class='info'>WOLOG: Polyomino State → Domino Tiles → Aegean Numbers</div>
+  
+  <script type='module'>
+    // ============================================================
+    // DOMINO/POLYOMINO VISUALIZER
+    // ============================================================
+    
+    const DOMINO_BASE = 0x1F030;
+    const AEGEAN_BASE = 0x10107;
+    
+    // Polyomino counts (OEIS A000105, A000988, A001168)
+    const POLYOMINO_COUNTS = {
+      free: { 1:1, 2:1, 3:2, 4:5, 5:12, 6:35, 7:108, 8:369, 9:1285 },
+      onesided: { 1:1, 2:1, 3:2, 4:7, 5:18, 6:60, 7:196, 8:704, 9:2500 },
+      fixed: { 1:1, 2:2, 3:6, 4:19, 5:63, 6:216, 7:760, 8:2725, 9:9910 }
+    };
+    
+    const CHANNEL_NAMES = ['Hex', '6-dot', '8-dot', 'Join', 'Aegean'];
+    
+    // State
+    let state = {
+      cells: 1,
+      mask: 1,
+      class: 'free',
+      tick: 0,
+      fanoPhase: 0,
+      sonarChannel: 0,
+      sonarSlot: 0,
+      omicronEvent: false
+    };
+    
+    // Helper functions
+    function digitToDomino(digit) {
+      const top = Math.floor(digit / 7);
+      const bottom = digit % 7;
+      return { top, bottom, horizontal: true };
+    }
+    
+    function dominoChar(tile) {
+      const index = tile.horizontal ? tile.top * 7 + tile.bottom : tile.bottom * 7 + tile.top + 70;
+      return String.fromCodePoint(DOMINO_BASE + index);
+    }
+    
+    function dominoSVG(tile, size = 60) {
+      const pipSize = size / 7;
+      const pipRadius = pipSize / 3;
+      
+      let pips = '';
+      for (let row = 0; row < 2; row++) {
+        for (let col = 0; col < 3; col++) {
+          if (tile.top > row * 3 + col) {
+            pips += `<circle cx="${col * pipSize + pipRadius}" cy="${row * pipSize + pipRadius}" r="${pipRadius}" fill="#1a1a2e"/>`;
+          }
+        }
+      }
+      for (let row = 0; row < 2; row++) {
+        for (let col = 0; col < 3; col++) {
+          if (tile.bottom > row * 3 + col) {
+            pips += `<circle cx="${col * pipSize + pipRadius}" cy="${(row + 2) * pipSize + pipRadius}" r="${pipRadius}" fill="#1a1a2e"/>`;
+          }
+        }
+      }
+      
+      return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="${size - 2}" height="${size - 2}" rx="4" fill="white" stroke="#333" stroke-width="1"/>
+        <line x1="2" y1="${size / 2}" x2="${size - 2}" y2="${size / 2}" stroke="#333" stroke-width="1"/>
+        ${pips}
+      </svg>`;
+    }
+    
+    function toAegean(n) {
+      const tenThousands = Math.floor(n / 10000);
+      n = n % 10000;
+      const thousands = Math.floor(n / 1000);
+      n = n % 1000;
+      const hundreds = Math.floor(n / 100);
+      n = n % 100;
+      const tens = Math.floor(n / 10);
+      const units = n % 10;
+      return { tenThousands, thousands, hundreds, tens, units };
+    }
+    
+    function aegeanChar(digit, place) {
+      const offset = { tenThousands: 9, thousands: 5, hundreds: 1, tens: 10, units: 1 };
+      const index = offset[place] + (digit % 10) - 1;
+      return String.fromCodePoint(AEGEAN_BASE + index);
+    }
+    
+    function renderAegean(n) {
+      let result = '';
+      if (n.tenThousands > 0) result += aegeanChar(n.tenThousands, 'tenThousands');
+      if (n.thousands > 0) result += aegeanChar(n.thousands, 'thousands');
+      if (n.hundreds > 0) result += aegeanChar(n.hundreds, 'hundreds');
+      if (n.tens > 0) result += aegeanChar(n.tens, 'tens');
+      if (n.units > 0) result += aegeanChar(n.units, 'units');
+      return result || String.fromCodePoint(AEGEAN_BASE);
+    }
+    
+    function tick() {
+      state.tick = (state.tick + 1) % 5040;
+      state.fanoPhase = state.tick % 7;
+      state.sonarChannel = Math.floor((state.tick % 60) / 15);
+      state.sonarSlot = state.tick % 15;
+      state.omicronEvent = (state.tick % 420 === 0) || state.tick === 0;
+      updateUI();
+    }
+    
+    function gnomon() {
+      if (state.mask === 0) {
+        state.cells = 1;
+        state.mask = 1;
+      } else {
+        const lowest = state.mask & -state.mask;
+        const expansion = (lowest << 1) | (lowest >> 1);
+        state.cells++;
+        state.mask = state.mask | expansion;
+      }
+      updateUI();
+    }
+    
+    function reset() {
+      state = {
+        cells: 1,
+        mask: 1,
+        class: state.class,
+        tick: 0,
+        fanoPhase: 0,
+        sonarChannel: 0,
+        sonarSlot: 0,
+        omicronEvent: true
+      };
+      updateUI();
+    }
+    
+    function updateUI() {
+      // Wallis
+      document.getElementById('tickVal').textContent = state.tick;
+      document.getElementById('dpVal').textContent = Math.floor(state.tick / 3600);
+      document.getElementById('pVal').textContent = Math.floor(state.tick / 60) % 60;
+      document.getElementById('uVal').textContent = state.tick % 60;
+      
+      const omicronEl = document.getElementById('omicronVal');
+      if (state.omicronEvent) {
+        omicronEl.textContent = '✦ OMICRON ✦';
+        omicronEl.className = 'stat-value omicron-event';
+      } else {
+        omicronEl.textContent = '—';
+        omicronEl.className = 'stat-value';
+      }
+      
+      // Aegean
+      const count = POLYOMINO_COUNTS.free[state.cells] || 0;
+      document.getElementById('aegeanVal').textContent = renderAegean(toAegean(count));
+      document.getElementById('freeCount').textContent = count;
+      document.getElementById('oneSidedCount').textContent = POLYOMINO_COUNTS.onesided[state.cells] || 0;
+      document.getElementById('fixedCount').textContent = POLYOMINO_COUNTS.fixed[state.cells] || 0;
+      
+      // Discretion matrix
+      const orientation = state.tick % 2 === 0 ? 'FEFF' : 'FFFE';
+      const channel = state.sonarChannel;
+      let gridHTML = '';
+      for (let ch = 0; ch < 5; ch++) {
+        const active = (ch === channel);
+        gridHTML += `<div class="discretion-cell ${active ? 'active' : ''}">
+          ${CHANNEL_NAMES[ch]}<br>${ch === 0 ? orientation : ''}
+        </div>`;
+      }
+      document.getElementById('discretionGrid').innerHTML = gridHTML;
+      
+      // Fano/Sonar
+      document.getElementById('fanoVal').textContent = state.fanoPhase;
+      document.getElementById('sonarChannel').textContent = state.sonarChannel;
+      document.getElementById('sonarSlot').textContent = state.sonarSlot;
+      
+      // Grid
+      renderGrid();
+    }
+    
+    function renderGrid() {
+      const container = document.getElementById('polyomino-grid');
+      
+      // Find bounding box
+      let minX = 100, maxX = -100, minY = 100, maxY = -100;
+      let tempMask = state.mask;
+      let idx = 0;
+      while (tempMask > 0) {
+        if (tempMask & 1) {
+          const x = (idx % 8) - 4;
+          const y = Math.floor(idx / 8) - 4;
+          minX = Math.min(minX, x);
+          maxX = Math.max(maxX, x);
+          minY = Math.min(minY, y);
+          maxY = Math.max(maxY, y);
+        }
+        tempMask >>= 1;
+        idx++;
+      }
+      
+      const cellSize = 50;
+      const width = maxX - minX + 1;
+      const height = maxY - minY + 1;
+      
+      let svg = `<svg width="${width * cellSize}" height="${height * cellSize}" viewBox="0 0 ${width * cellSize} ${height * cellSize}" xmlns="http://www.w3.org/2000/svg">
+        <style>
+          .cell-bg { fill: #21262d; stroke: #30363d; stroke-width: 1; }
+          .cell-active { fill: #58a6ff; }
+        </style>`;
+      
+      // Draw cells
+      tempMask = state.mask;
+      idx = 0;
+      while (tempMask > 0) {
+        if (tempMask & 1) {
+          const x = (idx % 8) - 4;
+          const y = Math.floor(idx / 8) - 4;
+          const px = (x - minX) * cellSize;
+          const py = (y - minY) * cellSize;
+          
+          const tile = digitToDomino(state.cells % 10);
+          svg += `<g transform="translate(${px + 2}, ${py + 2})">${dominoSVG(tile, cellSize - 4)}</g>`;
+        }
+        tempMask >>= 1;
+        idx++;
+      }
+      
+      svg += '</svg>';
+      container.innerHTML = svg;
+    }
+    
+    // Event listeners
+    document.getElementById('gnomonBtn').addEventListener('click', gnomon);
+    document.getElementById('tickBtn').addEventListener('click', tick);
+    document.getElementById('resetBtn').addEventListener('click', reset);
+    document.getElementById('classSelect').addEventListener('change', (e) => {
+      state.class = e.target.value;
+      updateUI();
+    });
+    
+    // Auto-tick
+    let autoTick = false;
+    let tickInterval = null;
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ') {
+        e.preventDefault();
+        tick();
+      } else if (e.key === 'g') {
+        gnomon();
+      } else if (e.key === 'r') {
+        reset();
+      } else if (e.key === 'p') {
+        autoTick = !autoTick;
+        if (autoTick) {
+          tickInterval = setInterval(tick, 100);
+        } else {
+          clearInterval(tickInterval);
+        }
+      }
+    });
+    
+    // Initial render
+    updateUI();
+  </script>
+</body>
+</html>

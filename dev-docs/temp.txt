@@ -1,0 +1,493 @@
+can you comment on the images i sent you and how they realte alogrithmically, like pure functions or hasskell types
+i want to make a library live a virtual codepoint space funtional tag pointers for svg building using this in 2D, 2.5D and 3D
+ 
+ Polyominoes—squares
+ Polycubes—cubes
+ Polyiamonds—equilateral triangles
+ Polyhexes—regular hexagons
+ Polytans—isosceles right triangles
+ Polyrhombs—congruent rhombuses (rhombi)
+ Polyrombiks—multi-size rhombi
+ Polyocts—octagons paired with squares
+ Polyrounds—circles and quarter arcs, convex and concave
+ Polybends—combinations of quarter arcs
+ Polyhops—squares on a hopscotch grid (rows offset by half a space)
+ Polyores—golden triangles
+
+based on two ways of resolving:
+By degree	
+Zero polynomial (degree undefined or −1 or −∞)Constant function (0)Linear function (1) Linear equationQuadratic function (2) Quadratic equationCubic function (3) Cubic equationQuartic function (4) Quartic equationQuintic function (5)Sextic equation (6)Septic equation (7)
+By properties	
+UnivariateBivariateMultivariateMonomialBinomialTrinomialIrreducibleSquare-freeHomogeneousQuasi-homogeneous
+
+
+ resel
+ pixel 
+ texel
+ voxel
+ 
+ tixel
+ hogel
+ 
+ 
+ AND I WANT A 
+ Smith_chart_gen
+ 
+ AND LIKE A Genaille division rods.svg
+ 
+ 
+ WITH A Binary_guess_number_trick_SMIL.svg
+ 
+ i THINK WE CAN ENCODE THE FULL SCANNABLE ARTICAFT POSITIONG LIKE SCHALIFI SYMBOLYS AND BETTIES NUMBERS, EITHER WITHE AGEAN OR STARS AND BARS AND THEN WE CAN ENCASUPLATE EVERY DETERMINSALITCALLY BASED ON LIKE ITS POLTNOOMIAL IDENTITY, IN THE CENTER BOTS WITH 40-BITS AS 8 GROUPS OF 5 OR MORE LIKELY 5 GROUPS OF 8
+ 
+---
+
+The compact Aztec code core may be surrounded by 1 to 4 layers, producing symbols from 15×15 (room for 13 digits or 12 letters) through 27×27. There is additionally a special 11×11 "rune" that encodes one byte of information. The full core supports up to 32 layers, 151×151 pixels, which can encode 3832 digits, 3067 letters, or 1914 bytes of data.
+
+Whatever part of the symbol is not used for the basic data is used for Reed–Solomon error correction, and the split is completely configurable, between limits of 1 data word, and 3 check words. The recommended number of check words is 23% of symbol capacity plus 3 codewords.[3]
+
+Aztec Code is supposed to produce readable codes with various printer technologies. It is also well suited for displays of cell phones and other mobile devices.
+
+Encoding
+The encoding process consists of the following steps:
+
+Converting the source message to a string of bits
+Computing the necessary symbol size and mode message, which determines the Reed–Solomon codeword size
+Bit-stuffing the message into Reed–Solomon codewords
+Padding the message to a codeword boundary
+Appending check codewords
+Arranging the complete message in a spiral around the core
+All conversion between bits strings and other forms is performed according to the big-endian (most significant bit first) convention.
+
+Character set
+All 8-bit values can be encoded, plus two escape codes:
+
+FNC1, an escape symbol used to mark the presence of an application identifier, in the same way as in the GS1-128 standard.
+ECI, an escape followed by a 6-digit Extended Channel Interpretation code, which specifies the character set used to interpret the following bytes.
+By default, codes 0–127 are interpreted according to ANSI X3.4 (ASCII), and 128–255 are interpreted according to ISO/IEC 8859-1: Latin Alphabet No. 1. This corresponds to ECI 000003.
+
+Bytes are translated into 4- and 5-bit codes, based on a current decoding mode, with shift and latch codes for changing modes. Byte values not available this way may be encoded using a general "binary shift" code, which is followed by a length and a number of 8-bit codes.
+
+For changing modes, a shift affects only the interpretation of the single following code, while a latch affects all following codes. Most modes use 5-bit codes, but Digit mode uses 4-bit codes.
+
+Aztec code character encoding
+Code	Mode		Code	Mode
+Upper	Lower	Mixed	Punct	Digit	Upper	Lower	Mixed	Punct
+0	P/S	P/S	P/S	FLG(n)	P/S	16	O	o	^\	+
+1	SP	SP	SP	CR	SP	17	P	p	^]	,
+2	A	a	^A	CR LF	0	18	Q	q	^^	-
+3	B	b	^B	. SP	1	19	R	r	^_	.
+4	C	c	^C	, SP	2	20	S	s	@	/
+5	D	d	^D	: SP	3	21	T	t	\	:
+6	E	e	^E	!	4	22	U	u	^	;
+7	F	f	^F	"	5	23	V	v	_	<
+8	G	g	^G	#	6	24	W	w		=
+9	H	h	^H	$	7	25	X	x	|	>
+10	I	i	^I	%	8	26	Y	y	~	?
+11	J	j	^J	&	9	27	Z	z	^?	[
+12	K	k	^K	'	,	28	L/L	U/S	L/L	]
+13	L	l	^L	(	.	29	M/L	M/L	U/L	{
+14	M	m	^M	)	U/L	30	D/L	D/L	P/L	}
+15	N	n	^[	*	U/S	31	B/S	B/S	B/S	U/L
+Initial mode is "Upper"
+x/S = Shift to mode x for one character; B/S = shift to 8-bit binary
+x/L = Latch to mode x for following characters
+Punct codes 2–5 encode two bytes each
+The table lists ASCII characters, but it is the byte values that are encoded, even if a non-ASCII character set is in use
+B/S (binary shift) is followed by a 5-bit length. If non-zero, this indicates that 1–31 8-bit bytes follow. If zero, 11 additional length bits encode the number of following bytes less 31. (Note that for 32–62 bytes, two 5-bit byte shift sequences are more compact than one 11-bit.) At the end of the binary sequence, the previous mode is resumed.
+
+FLG(n) is followed by a 3-bit n value. n=0 encodes FNC1. n=1–6 is followed by 1–6 digits (in digit mode) which are zero-padded to make a 6-bit ECI identifier. n=7 is reserved and currently illegal.
+
+Mode message
+The mode message encodes the number of layers (L layers encoded as the integer L−1), and the number of data codewords (D codewords, encoded as the integer D−1) in the message. All remaining codewords are used as check codewords.
+
+For compact Aztec codes, the number of layers is encoded as a 2-bit value, and the number of data codewords as a 6-bit value, resulting in an 8-bit mode word. For full Aztec codes, the number of layers is encoded in 5 bits, and the number of data codewords is encoded in 11 bits, making a 16-bit mode word.
+
+The mode word is broken into two or four 4-bit codewords in GF(16), and 5 or 6 Reed–Solomon check words are appended, making a 28- or 40-bit mode message, which is wrapped in a 1-pixel layer around the core. Thus a (15,10) or (15,9) Reed-Solomon code (shortened to (7,2) or (10,4) respectively), over GF(16) is used.
+
+Because an L+1-layer compact Aztec code can hold more data than an L-layer full code, full codes with less than 4 layers are rarely used.
+
+Most importantly, the number of layers determines the size of the Reed–Solomon codewords used. This varies from 6 to 12 bits:
+
+Aztec code finite field polynomials
+Bits	Field	Primitive polynomial	Generator polynomial (decimal coefficients)	Used for
+4	GF(16)	x4+x+1	x5+11x4+4x3+6x2+2x+1 (Compact code)
+x6+7x5+9x4+3x3+12x2+10x+12 (Full code)	Mode message
+6	GF(64)	x6+x+1	depends on number of error correction words	1–2 layers
+8	GF(256)	x8+x5+x3+x2+1	depends on number of error correction words	3–8 layers
+10	GF(1024)	x10+x3+1	depends on number of error correction words	9–22 layers
+12	GF(4096)	x12+x6+x5+x3+1	depends on number of error correction words	23–32 layers
+The codeword size b is the smallest even number which ensures that the total number of codewords in the symbol is less than the limit of 2b−1 which can be corrected by a Reed–Solomon code.
+
+As mentioned above, it is recommended that at least 23% of the available codewords, plus 3, are reserved for correction, and a symbol size is chosen such that the message will fit into the available space.
+
+Bit stuffing
+The data bits are broken into codewords, with the first bit corresponding to the most significant coefficient. While doing this, code words of all-zero and all-ones are avoided by bit stuffing: if the first b−1 bits of a code word have the same value, an extra bit with the complementary value is inserted into the data stream. This insertion takes place whether or not the last bit of the code word would have had the same value or not.
+
+Also, note that this only applies to strings of b−1 bits at the beginning of a code word. Longer strings of identical bits are permitted as long as they straddle a code word boundary.
+
+When decoding, a code word of all zero or all one may be assumed to be an erasure, and corrected more efficiently than a general error.
+
+This process makes the message longer, and the final number of data codewords recorded in the mode message is not known until it is complete. In rare cases, it may be necessary to jump to the next-largest symbol and begin the process all over again to maintain the minimum fraction of check words.
+
+Padding
+After bit stuffing, the data string is padded to the next codeword boundary by appending 1 bit. If this would result in a code word of all ones, the last bit is changed to zero (and will be ignored by the decoder as a bit-stuffing bit). On decoding, the padding bits may be decoded as shift and latch codes, but that will not affect the message content. The reader must accept and ignore a partial code at the end of the message, as long as it is all-ones.
+
+Additionally, if the total number of data bits available in the symbol is not a multiple of the codeword size, the data string is prefixed with an appropriate number of 0 bits to occupy the extra space. These bits are not included in the check word computation.
+
+Check codewords
+Both the mode word, and the data, must have check words appended to fill out the available space. This is computed by appending K check words such that the entire message is a multiple of the Reed–Solomon polynomial (x−2)(x−4)...(x−2K).
+
+Note that check words are not subject to bit stuffing, and may be all-zero or all-one. Thus, it is not possible to detect the erasure of a check word.
+
+Laying out the message
+
+9-layer (53×53) Aztec code with reference grid highlighted in red.
+A full Aztec code symbol has, in addition to the core, a "reference grid" of alternating black and white pixels occupying every 16th row and column. A compact Aztec code does not contain this grid. These known pixels allow a reader to maintain alignment with the pixel grid over large symbols. For up to 4 layers (31×31 pixels), this consists only of single lines extending outward from the core, continuing the alternating pattern. Inside the 5th layer, however, additional rows and columns of alternating pixels are inserted ±16 pixels from the center, so the 5th layer is located ±17 and ±18 pixels from the center, and a 5-layer symbol is 37×37 pixels.
+
+Likewise, additional reference grid rows and columns are inserted ±32 pixels from the center, making a 12-layer symbol 67×67 pixels. In this case, the 12th layer occupies rings ±31 and ±33 pixels from the center. The pattern continues indefinitely outward, with 15-pixel blocks of data separated by rows and columns of the reference grid.
+
+One way to construct the symbol is to delete the reference grid entirely and begin with a 14×14-pixel core centered on a 2×2 pixel-white square. Then break it into 15×15 pixel blocks and insert the reference grid between them.
+
+The mode message begins at the top-left corner of the core and wraps around it clockwise in a 1-bit thick layer. It begins with the most significant bit of the number of layers and ends with the check words. For a compact Aztec code, it is broken into four 7-bit pieces to leave room for the orientation marks. For a full Aztec code, it is broken into four 10-bit pieces, and those pieces are each divided in half by the reference grid.
+
+In some cases, the total capacity of the matrix does not divide evenly by full code words. In such cases, the main message is padded with 0 bits in the beginning. These bits are not included in the check word calculation and should be skipped during decoding. The total matrix capacity for a full symbol can be calculated as (112+16*L)*L for a full Aztec code and (88+16*L)*L for a compact Aztec code, where L is the symbol size in layers.[4] As an example, the total matrix capacity of a compact Aztec code with 1 layer is 104 bits. Since code words are six bits, this gives 17 code words and two extra bits. Two zero bits are prepended to the message as padding and must be skipped during decoding.
+
+The padded main message begins at the outer top-left of the entire symbol and spirals around it counterclockwise in a 2-bit thick layer, ending directly above the top-left corner of the core. This places the bit-stuffed data words, for which erasures can be detected, in the outermost layers of the symbol, which are most prone to erasures. The check words are stored closer to the core. The last check word ends just above the top left corner of the bull's eye.
+
+With the core in its standard orientation, the first bit of the first data word is placed in the upper-left corner, with additional bits placed in a 2-bit-wide column left-to-right and top-to-bottom. This continues until 2 rows from the bottom of the symbol when the pattern rotates 90 degrees counterclockwise and continues in a 2-bit high row, bottom-to-top and left-to-right. After 4 equal-sized quarter layers, the spiral continues with the top-left corner of the next-inner layer, finally ending one pixel above the top-left corner of the core.
+
+Finally, 1 bit are printed as black squares, and 0 bits are printed as white squares.
+i think its more 
+Polyominoes Basis/DEgree  = 	
+Domino |
+Tromino |
+Tetromino |
+Pentomino |
+Hexomino |
+Heptomino |
+Octomino |
+Nonomino |
+Decomino
+
+Polyominoes Rank =	
+Polyominoid |
+Polycube
+
+Polyominoes Group = 
+Pseudo-polyomino |
+Polyabolo |
+Polydrafter |
+Polyhex |
+Polyiamond |
+Polyknight |
+Polystick
+whats the best way to define Poliforms as What is a Polynomial?
+Polynomial is made up of two terms, namely Poly (meaning “many”) and Nominal (meaning “terms.”). A polynomial is defined as an expression which is composed of variables, constants and exponents, that are combined using mathematical operations such as addition, subtraction, multiplication and division (No division operation by a variable). Based on the number of terms present in the expression, it is classified as monomial, binomial, and trinomial. Examples of constants, variables and exponents are as follows:
+
+Constants. Example: 1, 2, 3, etc.
+Variables. Example: g, h, x, y, etc.
+Exponents: Example: 5 in x5 etc.
+Standard Form of a Polynomial
+P(x) = anxn + an-1xn-1 +an-2xn-2 + ………………. + a1x + a0   
+
+Where an, an-1, an-2, ……………………, a1, a0 are called coefficients of xn, xn-1, xn-2, ….., x and constant term respectively and it should belong to real number (⋲ R).
+
+
+Notation
+The polynomial function is denoted by P(x) where x represents the variable. For example,
+
+P(x) = x2-5x+11
+
+If the variable is denoted by a, then the function will be P(a)
+
+
+Degree of a Polynomial
+The degree of a polynomial is defined as the highest exponent of a monomial within a polynomial. Thus, a polynomial equation having one variable which has the largest exponent is called a degree of the polynomial.
+
+Polynomial	Degree	Example
+Zero Polynomial	Not Defined	6
+Constant	0	P(x)  = 6
+Linear Polynomial	1	P(x) = 3x+1
+Quadratic Polynomial	2	P(x) = 4x2+1x+1
+Cubic Polynomial	3	P(x) = 6x3+4x2+3x+1
+Quartic Polynomial	4	P(x) = 6x4+3x3+3x2+2x+1
+Example: Find the degree of the polynomial P(x) = 6s4+ 3x2+ 5x +19
+
+Solution:
+
+The degree of the polynomial is 4 as the highest power of the variable 4.
+
+
+Terms of a Polynomial
+The terms of polynomials are the parts of the expression that are generally separated by “+” or “-” signs. So, each part of a polynomial in an expression is a term. For example, in a polynomial, say, 2x2 + 5 +4, the number of terms will be 3. The classification of a polynomial is done based on the number of terms in it.
+
+Polynomial	Terms	Degree
+P(x) = x3-2x2+3x+4	x3, -2x2, 3x and 4	3
+
+Types of Polynomials
+Depending upon the number of terms, polynomials are divided into the following categories:
+
+Monomial
+Binomial
+Trinomial
+Polynomial containing 4 terms (Quadronomial) 
+Polynomial containing 5 terms (pentanomial ) and so on …
+These polynomials can be combined using addition, subtraction, multiplication, and division but is never divided by a variable. A few examples of Non Polynomials are: 1/x+2, x-3
+
+
+Monomial
+A monomial is an expression which contains only one term. For an expression to be a monomial, the single term should be a non-zero term. A few examples of monomials are:
+
+5x
+3
+6a4
+-3xy
+
+Binomial
+A binomial is a polynomial expression which contains exactly two terms. A binomial can be considered as a sum or difference between two or more monomials. A few examples of binomials are:
+
+– 5x+3,
+6a4 + 17x
+xy2+xy
+
+Trinomial
+A trinomial is an expression which is composed of exactly three terms. A few examples of trinomial expressions are:
+
+– 8a4+2x+7
+4x2 + 9x + 7
+Monomial	Binomial	Trinomial
+One Term	Two terms	Three terms
+Example: x, 3y, 29, x/2	Example: x2+x, x3-2x, y+2	Example: x2+2x+20
+
+Properties
+Some of the important properties of polynomials along with some important polynomial theorems are as follows:
+
+Property 1: Division Algorithm
+If a polynomial P(x) is divided by a polynomial G(x) results in quotient Q(x) with remainder R(x), then,
+
+P(x) = G(x) • Q(x) + R(x)
+
+Where R(x)=0 or the degree of R(x) < the degree of G(x)
+
+Property 2: Bezout’s Theorem
+Polynomial P(x) is divisible by binomial (x – a) if and only if P(a) = 0.
+
+Property 3: Remainder Theorem
+If P(x) is divided by (x – a) with remainder r, then P(a) = r.
+
+Property 4: Factor Theorem
+A polynomial P(x) divided by Q(x) results in R(x) with zero remainders if and only if Q(x) is a factor of P(x).
+
+Learn More: Factor Theorem
+
+Property 5: Intermediate Value Theorem
+If P(x) is a polynomial, and P(x) ≠ P(y) for (x < y), then P(x) takes every value from P(x) to P(y) in the closed interval [x, y].
+
+Learn More: Intermediate Value Theorem
+
+Property 6
+The addition, subtraction and multiplication of polynomials P and Q result in a polynomial where,
+
+Degree(P ± Q) ≤ Degree(P or Q)
+
+Degree(P × Q) = Degree(P) + Degree(Q)
+
+Property 7
+If a polynomial P is divisible by a polynomial Q, then every zero of Q is also a zero of P.
+
+Property 8
+If a polynomial P is divisible by two co-prime polynomials Q and R, then it is divisible by (Q • R).
+
+Property 9
+If P(x) = a0 + a1x + a2x2 + …… + anxn is a polynomial such that deg(P) = n ≥ 0 then, P has at most “n” distinct roots.
+
+Property 10: Descartes’ Rule of Sign
+The number of positive real zeroes in a polynomial function P(x) is the same or less than by an even number as the number of changes in the sign of the coefficients. So, if there are “K” sign changes, the number of roots will be “k” or “(k – a)”, where “a” is some even number.
+
+Property 11: Fundamental Theorem of Algebra
+Every non-constant single-variable polynomial with complex coefficients has at least one complex zero.
+
+Property 12
+If P(x) is a polynomial with real coefficients and has one complex zero (x = a – bi), then x = a + bi will also be a zero of P(x). Also, x2 – 2ax + a2 + b2 will be a factor of P(x).
+
+
+Polynomial Equations
+Polynomial equations are those expressions which are made up of multiple constants and variables. The standard form of writing a polynomial equation is to put the highest degree first and then, at last, the constant term. An example of a polynomial equation is:
+
+0 = a4 +3a3 -2a2 +a +1
+
+
+Polynomial Functions
+A polynomial function is an expression constructed with one or more terms of variables with constant exponents. If there are real numbers denoted by a, then function with one variable and of degree n can be written as:
+
+f(x) = a0xn + a1xn-1 + a2xn-2 + ….. + an-2x2 + an-1x + an
+
+Solving Polynomials
+Any polynomial can be easily solved using basic algebra and factorization concepts. While solving the polynomial equation, the first step is to set the right-hand side as 0. The explanation of a polynomial solution is explained in two different ways:
+
+Solving Linear Polynomials
+Solving Quadratic Polynomials
+
+Solving Linear Polynomials
+Getting the solution of linear polynomials is easy and simple. First, isolate the variable term and make the equation as equal to zero. Then solve as basic algebra operation. An example of finding the solution of a linear equation is given below:
+
+Example: Solve 3x – 9
+
+Solution:
+
+First, make the equation as 0. So,
+
+3x – 9 = 0
+
+⇒ 3x = 9
+
+⇒ x = 9/3
+
+Or, x = 3.
+
+Thus, the solution of 3x-9 is x = 3.
+
+Solving Quadratic Polynomials
+To solve a quadratic polynomial, first, rewrite the expression in the descending order of degree. Then, equate the equation and perform polynomial factorization to get the solution of the equation. An example to find the solution of a quadratic polynomial is given below for better understanding.
+
+Example: Solve 3x2 – 6x + x3 – 18
+
+Solution:
+
+First, arrange the polynomial in the descending order of degree and equate to zero.
+
+⇒ x3 + 3x2 -6x – 18 = 0
+
+Now, take the common terms.
+
+x2(x+3) – 6(x+3) =0
+
+⇒ (x2-6)(x+3)=0
+
+So, the solutions will be x =-3 or
+
+x2 = 6
+
+Or, x = ±√6
+
+More Polynomials Related Resources:
+
+Remainder Theorem And Polynomials	Algebraic Expressions
+Polynomials Worksheets	Zeros Of polynomial
+
+Polynomial Operations
+There are four main polynomial operations which are:
+
+Addition of Polynomials
+Subtraction of Polynomials
+Multiplication of Polynomials
+Division of Polynomials
+Each of the operations on polynomials is explained below using solved examples.
+
+Addition of Polynomials
+To add polynomials, always add the like terms, i.e. the terms having the same variable and power. The addition of polynomials always results in a polynomial of the same degree. For example,
+
+Example: Find the sum of two polynomials: 5x3+3x2y+4xy−6y2, 3x2+7x2y−2xy+4xy2−5
+
+Solution:
+
+First, combine the like terms while leaving the unlike terms as they are. Hence,
+
+(5x3+3x2y+4xy−6y2)+(3x2+7x2y−2xy+4xy2−5)
+
+= 5x3+3x2+(3+7)x2y+(4−2)xy+4xy2−6y2−5
+
+= 5x3+3x2+10x2y+2xy+4xy2−6y2−5
+
+Subtraction of Polynomials
+Subtracting polynomials is similar to addition, the only difference being the type of operation. So, subtract the like terms to obtain the solution. It should be noted that subtraction of polynomials also results in a polynomial of the same degree.
+
+Example: Find the difference of two polynomials: 5x3+3x2y+4xy−6y2, 3x2+7x2y−2xy+4xy2−5
+
+Solution:
+
+First, combine the like terms while leaving the unlike terms as they are. Hence,
+
+(5x3+3x2y+4xy−6y2)-(3x2+7x2y−2xy+4xy2−5)
+
+= 5x3-3x2+(3-7)x2y+(4+2)xy-4xy2−6y2+5
+
+= 5x3-3x2-4x2y+6xy-4xy2−6y2+5
+
+Multiplication of Polynomials
+Two or more polynomial when multiplied always result in a polynomial of higher degree (unless one of them is a constant polynomial). An example of multiplying polynomials is given below:
+
+Example: Solve (6x−3y)×(2x+5y)
+
+Solution:
+
+⇒ 6x ×(2x+5y)–3y × (2x+5y) ———- Using distributive law of multiplication
+
+⇒ (12x2+30xy) – (6yx+15y2) ———- Using distributive law of multiplication
+
+⇒12x2+30xy–6xy–15y2 —————– as xy = yx
+
+Thus, (6x−3y)×(2x+5y)=12x2+24xy−15y2
+
+Division of Polynomials
+Division of two polynomial may or may not result in a polynomial. Let us study below the division of polynomials in detail. To divide polynomials, follow the given steps:
+
+Polynomial Division Steps:
+
+If a polynomial has more than one term, we use long division method for the same. Following are the steps for it.
+
+Write the polynomial in descending order.
+Check the highest power and divide the terms by the same.
+Use the answer in step 2 as the division symbol.
+Now subtract it and bring down the next term.
+Repeat steps 2 to 4 until you have no more terms to carry down.
+Note the final answer, including remainder, will be in the fraction form (last subtract term).
+
+Polynomial Examples
+Example:
+
+Given two polynomial 7s3+2s2+3s+9 and 5s2+2s+1.
+
+Solve these using mathematical operation.
+
+Solution:
+
+Given polynomial:
+
+7s3+2s2+3s+9 and 5s2+2s+1
+
+Polynomial Addition: (7s3+2s2+3s+9) + (5s2+2s+1)
+
+= 7s3+(2s2+5s2)+(3s+2s)+(9+1)
+
+= 7s3+7s2+5s+10
+
+Hence, addition result in a polynomial.
+
+Polynomial Subtraction: (7s3+2s2+3s+9) – (5s2+2s+1)
+
+= 7s3+(2s2-5s2)+(3s-2s)+(9-1)
+
+= 7s3-3s2+s+8
+
+Hence addition result in a polynomial.
+
+Polynomial Multiplication:(7s3+2s2+3s+9) × (5s2+2s+1)
+
+= 7s3 (5s2+2s+1)+2s2 (5s2+2s+1)+3s (5s2+2s+1)+9 (5s2+2s+1))
+
+= (35s5+14s4+7s3)+ (10s4+4s3+2s2)+ (15s3+6s2+3s)+(45s2+18s+9)
+
+= 35s5+(14s4+10s4)+(7s3+4s3+15s3)+ (2s2+6s2+45s2)+ (3s+18s)+9
+
+= 35s5+24s4+26s3+ 53s2+ 21s +9
+
+Polynomial Division: (7s3+2s2+3s+9) ÷ (5s2+2s+1)
+
+(7s3+2s2+3s+9)/(5s2+2s+1)
+
+This cannot be simplified. Therefore, division of these polynomial do not result in a Polynomial.
+
+Keep visiting BYJU’S to get more such math lessons on different topics. Also, register now to access numerous video lessons for different math concepts to learn in a more effective and engaging way.
+full Poliform Unicode / ABI / SVG library spec

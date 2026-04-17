@@ -101,6 +101,10 @@ export function emptyScene(): Scene {
   };
 }
 
+export function createScene(): Scene {
+  return emptyScene();
+}
+
 // ------------------------------------------------------------------
 // Event Reduction
 // ------------------------------------------------------------------
@@ -185,4 +189,17 @@ export function reduceEvent(scene: Scene, event: Event): Scene {
     case "EventSetPoint":
       return next;
   }
+}
+
+export function reduceScene(
+  scene: Scene,
+  events: Event | readonly Event[] | null,
+): Scene {
+  if (events === null) {
+    return scene;
+  }
+  if (!("tag" in events)) {
+    return events.reduce((current, event) => reduceEvent(current, event), scene);
+  }
+  return reduceEvent(scene, events);
 }

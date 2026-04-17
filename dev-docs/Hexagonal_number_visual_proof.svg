@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="-48 -10 272 340">
+ <title>Hexagonal number visual proof</title>
+ <desc>Proof without words that a hexagonal number can be rearranged as rectangular numbers and odd-sided triangular numbers, drawn by CMG Lee.</desc>
+ <defs>
+  <circle id="pt" cx="4" cy="4" r="3"/>
+  <marker id="marker1" markerWidth="8" markerHeight="8" refX="4" refY="4" markerUnits="userSpaceOnUse"><use xlink:href="#pt" fill="#ff0000"/></marker>
+  <marker id="marker2" markerWidth="8" markerHeight="8" refX="4" refY="4" markerUnits="userSpaceOnUse"><use xlink:href="#pt" fill="#9966ff"/></marker>
+  <marker id="marker3" markerWidth="8" markerHeight="8" refX="4" refY="4" markerUnits="userSpaceOnUse"><use xlink:href="#pt" fill="#0000ff"/></marker>
+  <marker id="marker4" markerWidth="8" markerHeight="8" refX="4" refY="4" markerUnits="userSpaceOnUse"><use xlink:href="#pt" fill="#00cc00"/></marker>
+  <marker id="marker5" markerWidth="8" markerHeight="8" refX="4" refY="4" markerUnits="userSpaceOnUse"><use xlink:href="#pt" fill="#666666"/></marker>
+  <marker id="marker6" markerWidth="8" markerHeight="8" refX="4" refY="4" markerUnits="userSpaceOnUse"><use xlink:href="#pt" fill="#ff9900"/></marker>
+ </defs>
+ <circle cx="0" cy="0" r="99999" fill="#ffffff"/>
+ <g font-family="'Liberation Sans',Helvetica,Arial,sans-serif" font-size="24" letter-spacing="-1" fill="none" stroke="#999999">
+  <g transform="translate(0,0)">
+   <polygon id="rec1" points="0,0 0,0" marker-mid="url(#marker1)"/>
+   <polygon id="hex1" points="0,0 0,0" marker-mid="url(#marker1)" transform="translate(90,0)"/>
+   <polygon id="tri1" points="0,0 0,0" marker-mid="url(#marker1)" transform="translate(175,0)"/>
+  </g>
+  <g transform="translate(0,32)">
+   <g id="rec2">
+    <polygon points="0,-4 -8,-4 -8,-12 0,-12 8,-12 8,-4 0,-4" marker-mid="url(#marker2)"/>
+    <use xlink:href="#rec1" transform="translate(0,-4)"/>
+   </g>
+   <g id="hex2">
+    <polygon points="0,0 -7,-4 -7,-12 0,-16 7,-12 7,-4 0,0" marker-mid="url(#marker2)" transform="translate(90,0)"/>
+    <use xlink:href="#hex1"/>
+   </g>
+   <g id="tri2">
+    <polygon points="0,0 -8,0 -4,-7 0,-14 4,-7 8,0 0,0" marker-mid="url(#marker2)" transform="translate(175,0)"/>
+    <use xlink:href="#tri1"/>
+   </g>
+  </g>
+  <g transform="translate(0,80)">
+   <g id="rec3">
+    <polygon points="0,-8 -16,-8 -16,-16 -16,-24 -8,-24 0,-24 8,-24 16,-24 16,-16 16,-8 0,-8" marker-mid="url(#marker3)"/>
+    <use xlink:href="#rec2" transform="translate(0,-4)"/>
+   </g>
+   <g id="hex3">
+    <polygon points="0,0 -14,-8 -14,-16 -14,-24 -7,-28 0,-32 7,-28 14,-24 14,-16 14,-8 0,0" marker-mid="url(#marker3)" transform="translate(90,0)"/>
+    <use xlink:href="#hex2"/>
+   </g>
+   <g id="tri3">
+    <polygon points="0,0 -16,0 -12,-7 -8,-14 -4,-21 0,-28 4,-21 8,-14 12,-7 16,0 0,0" marker-mid="url(#marker3)" transform="translate(175,0)"/>
+    <use xlink:href="#tri2"/>
+   </g>
+  </g>
+  <g transform="translate(0,144)">
+   <g id="rec4">
+    <polygon points="0,-12 -24,-12 -24,-20 -24,-28 -24,-36 -16,-36 -8,-36 0,-36 8,-36 16,-36 24,-36 24,-28 24,-20 24,-12 0,-12" marker-mid="url(#marker4)"/>
+    <use xlink:href="#rec3" transform="translate(0,-4)"/>
+   </g>
+   <g id="hex4">
+    <polygon points="0,0 -21,-12 -21,-20 -21,-28 -21,-36 -14,-40 -7,-44 0,-48 7,-44 14,-40 21,-36 21,-28 21,-20 21,-12 0,0" marker-mid="url(#marker4)" transform="translate(90,0)"/>
+    <use xlink:href="#hex3"/>
+   </g>
+   <g id="tri4">
+    <polygon points="0,0 -24,0 -20,-7 -16,-14 -12,-21 -8,-28 -4,-35 0,-42 4,-35 8,-28 12,-21 16,-14 20,-7 24,0 0,0" marker-mid="url(#marker4)" transform="translate(175,0)"/>
+    <use xlink:href="#tri3"/>
+   </g>
+  </g>
+  <g transform="translate(0,224)">
+   <g id="rec5">
+    <polygon points="0,-16 -32,-16 -32,-24 -32,-32 -32,-40 -32,-48 -24,-48 -16,-48 -8,-48 0,-48 8,-48 16,-48 24,-48 32,-48 32,-40 32,-32 32,-24 32,-16 0,-16" marker-mid="url(#marker5)"/>
+    <use xlink:href="#rec4" transform="translate(0,-4)"/>
+   </g>
+   <g id="hex5">
+    <polygon points="0,0 -28,-16 -28,-24 -28,-32 -28,-40 -28,-48 -21,-52 -14,-56 -7,-60 0,-64 7,-60 14,-56 21,-52 28,-48 28,-40 28,-32 28,-24 28,-16 0,0" marker-mid="url(#marker5)" transform="translate(90,0)"/>
+    <use xlink:href="#hex4"/>
+   </g>
+   <g id="tri5">
+    <polygon points="0,0 -32,0 -28,-7 -24,-14 -20,-21 -16,-28 -12,-35 -8,-42 -4,-49 0,-56 4,-49 8,-42 12,-35 16,-28 20,-21 24,-14 28,-7 32,0 0,0" marker-mid="url(#marker5)" transform="translate(175,0)"/>
+    <use xlink:href="#tri4"/>
+   </g>
+   <g fill="#000000" stroke="none">
+    <text transform="translate(39,-35)" x="0" dy="0.7ex"><tspan font-style="italic">n</tspan></text>
+    <text transform="translate(-25,0)" x="0" dy="0.7ex"><tspan>2</tspan><tspan dx="-0.1ex" font-style="italic">n</tspan><tspan dx="0.2ex">&#8722;1</tspan></text>
+   </g>
+  </g>
+  <g transform="translate(0,320)">
+   <g id="rec6">
+    <polygon points="0,-20 -40,-20 -40,-28 -40,-36 -40,-44 -40,-52 -40,-60 -32,-60 -24,-60 -16,-60 -8,-60 0,-60 8,-60 16,-60 24,-60 32,-60 40,-60 40,-52 40,-44 40,-36 40,-28 40,-20 0,-20" marker-mid="url(#marker6)"/>
+    <use xlink:href="#rec5" transform="translate(0,-4)"/>
+   </g>
+   <g id="hex6">
+    <polygon points="0,0 -35,-20 -35,-28 -35,-36 -35,-44 -35,-52 -35,-60 -28,-64 -21,-68 -14,-72 -7,-76 0,-80 7,-76 14,-72 21,-68 28,-64 35,-60 35,-52 35,-44 35,-36 35,-28 35,-20 0,0" marker-mid="url(#marker6)" transform="translate(90,0)"/>
+    <use xlink:href="#hex5"/>
+   </g>
+   <g id="tri6">
+    <polygon points="0,0 -40,0 -36,-7 -32,-14 -28,-21 -24,-28 -20,-35 -16,-42 -12,-49 -8,-56 -4,-63 0,-70 4,-63 8,-56 12,-49 16,-42 20,-35 24,-28 28,-21 32,-14 36,-7 40,0 0,0" marker-mid="url(#marker6)" transform="translate(175,0)"/>
+    <use xlink:href="#tri5"/>
+   </g>
+  </g>
+ </g>
+</svg>
